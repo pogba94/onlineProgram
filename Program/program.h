@@ -33,8 +33,6 @@ typedef enum BAUDRATE_SYNC_STATUS{
 	SYNC_STATUS_SYNC_CONFIRM = 2,
 	SYNC_STATUS_SYNC_DONE = 3,
 	SYNC_STATUS_SYNC_TIMEOUT = 4,
-	SYNC_STATUS_SYNCHRONIZED = 5,
-	SYNC_STATUS_SYNCHRONIZED_COMFIRM = 6,
 	SYNC_STATUS_SYNC_ERROR = 7,
 }BAUDRATE_SYNC_STATUS_T;
 
@@ -44,24 +42,43 @@ typedef enum ISP_CMD{
 	ISP_CMD_ECHO,
 	ISP_CMD_WRITE_TO_RAM,
 	ISP_CMD_READ_MEMORY,
-	ISP_CMD_PRE_WRITE,
+	ISP_CMD_PREPARE_SECTORS,
 	ISP_CMD_COPY_RAM_TO_FLASH,
 	ISP_CMD_GO,
-	ISP_CMD_ERASE_SECTOR,
-	ISP_CMD_BLANK_CHECK_SECTOR,
+	ISP_CMD_ERASE_SECTORS,
+	ISP_CMD_BLANK_CHECK_SECTORS,
 	ISP_CMD_READ_PART_ID,
 	ISP_CMD_READ_BOOT_CODE_VERSION,
 	ISP_CMD_COMPARE,
 	ISP_CMD_READ_UID
 }ISP_CMD_T;
 
+typedef enum RET_CODE
+{
+	RET_CODE_SUCCESS = 0,
+	RET_CODE_ERROR = -1,
+	RET_CODE_RESP_TIMEOUT = -2,
+	RET_CODE_PARAM_ILLEGAL = -3,
+	RET_CODE_MEM_OVERFLOW = -4,
+	RET_CODE_WRITE_FAIL = -5
+}RET_CODE_T;
+
 #define   BAUDRATE_SYNC_SEND_STR          "?"
 #define   BAUDRATE_SYNC_RECV_STR          "Synchronized"
 #define   OK_STR                          "OK"
 #define   ENDCODE_STR                     "\r\n"
-#define   SPACE_STR                       ' '
+#define   UNLOCK_CMD_STR                  "U 23130"
+#define   DISABLE_ECHO_CMD_STR            "A 0\r\n"
+#define   CMD_SUCCESS_RESP_STR            "0\r\n"
+
+#define   ISP_MAX_SIZE_WRITE                     (512)
+#define   ISP_MAX_SIZE_COPY                      (1024) 
 
 int ISP_syncBaudRate(void);
 int ISP_getPartID(char partId[]);
+int ISP_unlock(void);
+int ISP_disableEcho(void);
+int ISP_sectorOperation(int select,int start,int end);
+int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data);
 
 #endif

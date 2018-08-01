@@ -2,11 +2,19 @@
 ".\build\uvision5\main.o"
 ".\build\uvision5\program.o"
 ".\build\uvision5\lib_crc16.o"
+".\build\uvision5\uuencode.o"
 ".\build\uvision5\c12832.o"
 ".\build\uvision5\graphicsdisplay.o"
 ".\build\uvision5\textdisplay.o"
 ".\build\uvision5\cjson.o"
 ".\build\uvision5\ethernetinterface.o"
+".\build\uvision5\sdfilesystem.o"
+".\build\uvision5\fatdirhandle.o"
+".\build\uvision5\fatfilehandle.o"
+".\build\uvision5\fatfilesystem.o"
+".\build\uvision5\ccsbcs.o"
+".\build\uvision5\diskio.o"
+".\build\uvision5\ff.o"
 ".\build\uvision5\freescaleiap.o"
 ".\build\uvision5\endpoint.o"
 ".\build\uvision5\socket.o"
@@ -103,6 +111,6 @@
 ".\build\uvision5\msg_in.o"
 ".\build\uvision5\msg_out.o"
 --scatter ".\mbed\TARGET_K64F\TOOLCHAIN_ARM_STD\MK64FN1M0xxx12.sct"
---summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list ".\build\OnlineProgram.map" -o .\build\uvision5\OnlineProgram.axf

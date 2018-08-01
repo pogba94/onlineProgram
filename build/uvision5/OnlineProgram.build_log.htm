@@ -3,58 +3,336 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: ¦ÌVision V5.24.2.0
+IDE-Version: ¦ÌVision V5.23.0.0
 Copyright (C) 2017 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: hazard eden, www, LIC=Z3CWF-62WAH-PFSIX-H8FBT-Y6SJ6-UKQQJ
+License Information: cai orange wpg Flex license: MDK-ARM Plus: 9 user(s) (mdk_std) Support: Oct 2017
  
 Tool Versions:
-Toolchain:       MDK-ARM Professional  Version: 5.24.1
-Toolchain Path:  F:\solfware_install\Keil\ARM\ARMCC\Bin
-C Compiler:      Armcc.exe V5.06 update 5 (build 528)
-Assembler:       Armasm.exe V5.06 update 5 (build 528)
-Linker/Locator:  ArmLink.exe V5.06 update 5 (build 528)
-Library Manager: ArmAr.exe V5.06 update 5 (build 528)
-Hex Converter:   FromElf.exe V5.06 update 5 (build 528)
-CPU DLL:         SARMCM3.DLL V5.24.1
-Dialog DLL:      DCM.DLL V1.16.0.0
-Target DLL:      CMSIS_AGDI.dll V1.28.3.0
-Dialog DLL:      TCM.DLL V1.32.0.0
+Toolchain:       MDK-ARM Plus: 9 user(s)  Version: 5.23
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 4 (build 422)
+Assembler:       Armasm.exe V5.06 update 4 (build 422)
+Linker/Locator:  ArmLink.exe V5.06 update 4 (build 422)
+Library Manager: ArmAr.exe V5.06 update 4 (build 422)
+Hex Converter:   FromElf.exe V5.06 update 4 (build 422)
+CPU DLL:         SARMCM3.DLL V5.23
+Dialog DLL:      DCM.DLL V1.15.0.0
+Target DLL:      CMSIS_AGDI.dll V1.27.5.0
+Dialog DLL:      TCM.DLL V1.27.0.0
  
 <h2>Project:</h2>
-D:\WPI\Project\SW-Online-Authorization\V2.0\OnlineFlash\OnlineProgram.uvprojx
-Project File Date:  07/23/2018
+D:\WPI\Project\SW-Online-program\V2.0\OnlineProgram\OnlineProgram.uvprojx
+Project File Date:  07/31/2018
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 5 (build 528)', folder: 'F:\solfware_install\Keil\ARM\ARMCC\Bin'
-Build target 'OnlineProgram'
+*** Using Compiler 'V5.06 update 4 (build 422)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Rebuild target 'OnlineProgram'
+compiling lib_crc16.cpp...
+compiling cJSON.cpp...
+cJSON/cJSON.cpp(55): warning:  #1293-D: assignment in condition
+        if (!(copy = (char*)cJSON_malloc(len))) return 0;
+cJSON/cJSON.cpp(282): warning:  #1293-D: assignment in condition
+      ptr=str;while ((token=*ptr) && ++len) {if (strchr("\"\\\b\f\n\r\t",token)) len++; else if (token<32) len+=5;ptr++;}
+cJSON/cJSON.cpp(426): warning:  #1293-D: assignment in condition
+          if (!(new_item=cJSON_New_Item())) return 0;     /* memory fail */
+cJSON/cJSON.cpp(538): warning:  #1293-D: assignment in condition
+          if (!(new_item=cJSON_New_Item()))   return 0; /* memory fail */
+cJSON/cJSON.cpp: 4 warnings, 0 errors
 compiling main.cpp...
-.\TargetBoard\LPC1125_FlashMap.h(12): warning:  #1-D: last line of file ends without a newline
+.\TargetBoard\LPC1125_FlashMap.h(15): warning:  #1-D: last line of file ends without a newline
   #endif
-main.cpp(47): warning:  #1-D: last line of file ends without a newline
+.\UUencode\UUencode.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+main.cpp(100): warning:  #177-D: variable "checksum"  was declared but never referenced
+  		int checksum = 0;
+main.cpp(253): warning:  #1-D: last line of file ends without a newline
   }
-main.cpp: 2 warnings, 0 errors
+main.cpp: 4 warnings, 0 errors
+compiling UUencode.cpp...
+UUencode\UUencode.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+UUencode\UUencode.cpp(86): warning:  #940-D: missing return statement at end of non-void function "UUdecodeLine" 
+  }
+UUencode\UUencode.cpp(102): warning:  #1-D: last line of file ends without a newline
+  }
+UUencode\UUencode.cpp: 3 warnings, 0 errors
+compiling GraphicsDisplay.cpp...
 compiling program.cpp...
-Program\program.cpp(147): warning:  #940-D: missing return statement at end of non-void function "ISP_getPartID" 
+.\TargetBoard\LPC1125_FlashMap.h(15): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\UUencode\UUencode.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+Program\program.cpp(270): warning:  #186-D: pointless comparison of unsigned integer with zero
+  	if(
+HECK_FLASH_ADDR(dst) && dst%256 == 0 && CHECK_RAM_ADDR(src)
+Program\program.cpp(276): warning:  #1-D: last line of file ends without a newline
   }
-Program\program.cpp: 1 warning, 0 errors
+Program\program.cpp(276): warning:  #940-D: missing return statement at end of non-void function "ISP_CopyToFlash" 
+  }
+Program\program.cpp: 5 warnings, 0 errors
+compiling TextDisplay.cpp...
+compiling FATDirHandle.cpp...
+compiling ccsbcs.cpp...
+compiling C12832.cpp...
+C12832\C12832.cpp(32): warning:  #1299-D: members and base-classes will be initialized in declaration order, not in member initialisation list order
+      : _spi(mosi,NC,sck),_reset(reset),_A0(a0),_CS(ncs),GraphicsDisplay(name)
+C12832\C12832.cpp: 1 warning, 0 errors
+compiling EthernetInterface.cpp...
+compiling ff.cpp...
+compiling FATFileHandle.cpp...
+compiling FreescaleIAP.cpp...
+compiling diskio.cpp...
+compiling FATFileSystem.cpp...
+compiling SDFileSystem.cpp...
+compiling HAL_CM.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/HAL_CM.c: 4 warnings, 0 errors
+compiling rt_Event.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Event.c: 4 warnings, 0 errors
+compiling Endpoint.cpp...
+compiling rt_List.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_List.c: 4 warnings, 0 errors
+compiling rt_Mailbox.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(112): warning:  #3731-D: intrinsic is deprecated
+      
+t_inc (&p_MCB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(112): warning:  #3731-D: intrinsic is deprecated
+      
+t_inc (&p_MCB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(151): warning:  #3731-D: intrinsic is deprecated
+        
+t_dec (&p_MCB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(151): warning:  #3731-D: intrinsic is deprecated
+        
+t_dec (&p_MCB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(214): warning:  #3731-D: intrinsic is deprecated
+      
+t_dec (&p_MCB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(214): warning:  #3731-D: intrinsic is deprecated
+      
+t_dec (&p_MCB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(253): warning:  #3731-D: intrinsic is deprecated
+        
+t_inc (&p_CB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(253): warning:  #3731-D: intrinsic is deprecated
+        
+t_inc (&p_CB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(280): warning:  #3731-D: intrinsic is deprecated
+        
+t_inc (&p_CB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c(280): warning:  #3731-D: intrinsic is deprecated
+        
+t_inc (&p_CB->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mailbox.c: 14 warnings, 0 errors
+compiling Socket.cpp...
+compiling rt_MemBox.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_MemBox.c(108): warning:  #3731-D: intrinsic is deprecated
+      if ((free = (void **)__ldrex(&((P_BM) box_mem)->free)) == 0U) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_MemBox.c(112): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex((U32)*free, &((P_BM) box_mem)->free));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_MemBox.c(160): warning:  #3731-D: intrinsic is deprecated
+      } while (*(void**)box != (void *)__ldrex(&((P_BM) box_mem)->free));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_MemBox.c(161): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex ((U32)box, &((P_BM) box_mem)->free));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_MemBox.c: 8 warnings, 0 errors
+compiling rt_Memory.c...
+compiling rt_Mutex.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Mutex.c: 4 warnings, 0 errors
+compiling rt_OsEventObserver.c...
+compiling rt_CMSIS.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_CMSIS.c: 4 warnings, 0 errors
+compiling rt_Robin.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Robin.c: 4 warnings, 0 errors
+compiling rt_Semaphore.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Semaphore.c: 4 warnings, 0 errors
+compiling rt_Time.c...
+compiling rt_Task.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_Task.c: 4 warnings, 0 errors
+compiling rt_Timer.c...
+compiling rt_System.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_System.c(245): warning:  #3731-D: intrinsic is deprecated
+      
+t_dec (&os_psq->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_System.c(245): warning:  #3731-D: intrinsic is deprecated
+      
+t_dec (&os_psq->count);
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_System.c: 6 warnings, 0 errors
+compiling RTX_Conf_CM.c...
+compiling HAL_CM4.c...
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(209): warning:  #3731-D: intrinsic is deprecated
+      if ((cnt = __ldrex(count)) == size) {
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(212): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(cnt+1U, count));
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(214): warning:  #3731-D: intrinsic is deprecated
+      c2 = (cnt = __ldrex(first)) + 1U;
+mbed-rtos/rtx/TARGET_CORTEX_M/rt_HAL_CM.h(216): warning:  #3731-D: intrinsic is deprecated
+    } while (__strex(c2, first));
+mbed-rtos/rtx/TARGET_CORTEX_M/TARGET_RTOS_M4_M7/TOOLCHAIN_ARM/HAL_CM4.c: 4 warnings, 0 errors
+assembling SVC_Table.S...
+compiling TCPSocketConnection.cpp...
+compiling UDPSocket.cpp...
+compiling TCPSocketServer.cpp...
+compiling hardware_init_MK64F12.c...
+compiling api_msg.c...
+compiling api_lib.c...
+compiling k64f_emac.c...
+compiling netifapi.c...
+compiling checksum.c...
+compiling memcpy.c...
+compiling err.c...
+compiling netbuf.c...
+compiling netdb.c...
+compiling def.c...
+compiling dns.c...
+compiling sys_arch.c...
+compiling tcpip.c...
+compiling init.c...
+compiling sockets.c...
+compiling dhcp.c...
+compiling raw.c...
+compiling mem.c...
+compiling stats.c...
+compiling memp.c...
+compiling pbuf.c...
+compiling netif.c...
+compiling tcp.c...
+compiling autoip.c...
+compiling icmp.c...
+compiling igmp.c...
+compiling timers.c...
+compiling udp.c...
+compiling tcp_in.c...
+compiling tcp_out.c...
+compiling ethernetif.c...
+compiling inet.c...
+compiling inet_chksum.c...
+compiling ip_addr.c...
+compiling ip_frag.c...
+compiling ip.c...
+compiling etharp.c...
+compiling auth.c...
+compiling fsm.c...
+compiling ipcp.c...
+compiling lcp.c...
+compiling chap.c...
+compiling slipif.c...
+compiling chpms.c...
+compiling randm.c...
+compiling pap.c...
+compiling Mutex.cpp...
+compiling rtos_idle.c...
+compiling ppp.c...
+compiling md5.c...
+compiling RtosTimer.cpp...
+compiling Semaphore.cpp...
+compiling magic.c...
+compiling vj.c...
+compiling ppp_oe.c...
+compiling msg_in.c...
+compiling msg_out.c...
+compiling asn1_enc.c...
+compiling mib2.c...
+compiling asn1_dec.c...
+compiling mib_structs.c...
+compiling Thread.cpp...
 linking...
-Program Size: Code=30510 RO-data=3738 RW-data=204 ZI-data=7788  
+Program Size: Code=45218 RO-data=7306 RW-data=240 ZI-data=8996  
 After Build - User command #1: fromelf --bin -o .\build\uvision5\bin\OnlineProgram.bin .\build\uvision5\OnlineProgram.axf
-".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 3 Warning(s).
-
-<h2>Software Packages used:</h2>
-
-Package Vendor: Keil
-                http://www.keil.com/pack/Keil.Kinetis_K60_DFP.1.4.0.pack
-                Keil.Kinetis_K60_DFP.1.4.0
-                Freescale Kinetis K60 Series Device Support and Examples
+".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 81 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\_OnlineProgram
-  F:\solfware_install\Keil\ARM\PACK\Keil\Kinetis_K60_DFP\1.4.0\Device\Include
+  C:\Keil_v5\ARM\PACK\Keil\Kinetis_K60_DFP\1.4.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:27
 </pre>
 </body>
 </html>

@@ -9,4 +9,7 @@
 #define  RAM_SIZE                         8192
 #define  RAM_END_ADDRESS                  (RAM_START_ADDRESS + RAM_SIZE - 1)
 
+#define  CHECK_RAM_ADDR(x)        				((x>=RAM_START_ADDRESS&&x<=RAM_END_ADDRESS)?1:0)
+#define  CHECK_FLASH_ADDR(x)              ((x>=FLASH_START_ADDRESS&&x<=FLASH_END_ADDRESS)?1:0)
+
 #endif
