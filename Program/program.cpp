@@ -53,7 +53,7 @@ int ISP_syncBaudRate(void)
 						if(p == NULL)
 							syncStatus = SYNC_STATUS_SYNC_ERROR;
 						else
-							syncStatus = SYNC_STATUS_SYNC_DONE;
+							syncStatus = SYNC_STATUS_EXIT_SYNC;
 					}
 				}
 			  break;
@@ -67,15 +67,15 @@ int ISP_syncBaudRate(void)
 					pc.printf("recieve data:%s\r\n",ispRecvBuf);
 					p = strstr(ispRecvBuf,OK_STR);
 					if(p != NULL){
-						syncStatus = SYNC_STATUS_SYNC_CONFIRM;
+						syncStatus = SYNC_STATUS_SEND_FREQ;
 					}else{
 						syncStatus = SYNC_STATUS_SYNC_ERROR;
 					}
 				}
 				break;
-			case SYNC_STATUS_SYNC_CONFIRM:
+			case SYNC_STATUS_SEND_FREQ:
 				memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
-			  isp.puts(CMD_SUCCESS_RESP_STR);
+			  isp.puts("0\r\n");
 				if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
 					syncStatus = SYNC_STATUS_SYNC_TIMEOUT;
 				}else{
@@ -86,6 +86,18 @@ int ISP_syncBaudRate(void)
 					}else{
 						syncStatus = SYNC_STATUS_SYNC_ERROR;
 					}
+				}
+				break;
+			case SYNC_STATUS_EXIT_SYNC:
+				memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
+				isp.putc(27);
+				if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
+					syncStatus = SYNC_STATUS_SYNC_TIMEOUT;
+				}else{
+					if(ispRecvBuf[0] == 27)
+						syncStatus = SYNC_STATUS_SYNC_DONE;
+					else
+						syncStatus = SYNC_STATUS_SYNC_ERROR;
 				}
 				break;
 			case SYNC_STATUS_SYNC_DONE:
@@ -106,9 +118,9 @@ int ISP_syncBaudRate(void)
 int ISP_getPartID(char partId[])
 {
 	char *p;
+	memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
 	isp.putc(isp_cmd_list[ISP_CMD_READ_PART_ID]);
 	isp.puts(ENDCODE_STR);
-	memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
   if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
 		return RET_CODE_RESP_TIMEOUT;
 	}else{
@@ -139,10 +151,7 @@ int ISP_unlock(void)
 		return RET_CODE_RESP_TIMEOUT;
 	}else{
 		char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
-		if(p != NULL)
-			return RET_CODE_SUCCESS;
-		else
-			return RET_CODE_ERROR;
+		return ((p != NULL)?RET_CODE_SUCCESS:RET_CODE_ERROR);
 	}
 }
 
@@ -158,27 +167,6 @@ int ISP_disableEcho(void)
 		else
 			return RET_CODE_ERROR;
 	}	
-}
-
-int ISP_prepareSector(int start,int end)
-{
-	if(start >=0 && end <= SECTOR_NUM - 1){
-		char cmdStr[8];
-		sprintf(cmdStr,"%c %d %d\r\n",isp_cmd_list[ISP_CMD_PREPARE_SECTORS],start,end);
-		memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
-		isp.puts(cmdStr);
-		if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
-			return RET_CODE_RESP_TIMEOUT;
-		}else{
-			char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
-			if(p != NULL)
-				return RET_CODE_SUCCESS;
-			else
-				return RET_CODE_ERROR;
-		}
-	}else{
-		return RET_CODE_PARAM_ILLEGAL;
-	}
 }
 
 int ISP_sectorOperation(int select,int start,int end)
@@ -201,13 +189,22 @@ int ISP_sectorOperation(int select,int start,int end)
 			return RET_CODE_RESP_TIMEOUT;
 		}else{
 			char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
-			if(p != NULL)
-				return RET_CODE_SUCCESS;
-			else
-				return RET_CODE_ERROR;
+			return ((p != NULL)?RET_CODE_SUCCESS:RET_CODE_ERROR);
 		}
 	}else{
 		return RET_CODE_PARAM_ILLEGAL;
+	}
+}
+
+int ISP_EraseSector(int start,int end)
+{
+	int ret;
+	ret = ISP_sectorOperation(ISP_CMD_PREPARE_SECTORS,start,end);
+	if(ret == RET_CODE_SUCCESS){
+		ret = ISP_sectorOperation(ISP_CMD_ERASE_SECTORS,start,end);
+		return ret;
+	}else{
+		return ret;
 	}
 }
 
@@ -237,24 +234,20 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data)
 					else
 						UUencodeLine(data+45*i,encode,extra);
 					isp.puts(encode);
-//					wait_ms(1);
+					wait_ms(10);  //may be unnecessary
 				}
-				//send checksum that is the sum of data to be sent
+				/* send checksum that is the sum of data to be sent */
 				for(int i=0;i<size;i++)
 					checksum += data[i];
 				sprintf(checksumStr,"%d\r\n",checksum);
 				pc.printf("checksum=%d\r\n",checksum);
-				isp.puts(checksumStr);
 				memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
+				isp.puts(checksumStr);
 				if(ISP_getResp(ispRecvBuf,1000) <= 0){
 					return RET_CODE_RESP_TIMEOUT;
 				}else{
 					char *p = strstr(ispRecvBuf,OK_STR);
-					if(p != NULL)
-						return RET_CODE_SUCCESS;
-					else{
-						return RET_CODE_WRITE_FAIL;
-					}
+					return ((p != NULL)?RET_CODE_SUCCESS:RET_CODE_ERROR);
 				}
 			}else{
 				return RET_CODE_ERROR;
@@ -265,11 +258,30 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data)
 	}
 }
 
-int ISP_CopyToFlash(uint32_t dst,uint32_t src,uint16_t size)
+
+
+
+int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size)
 {
-	if(CHECK_FLASH_ADDR(dst) && dst%256 == 0 && CHECK_RAM_ADDR(src)
-		&& (size == 256 || size == 512 || size == 1024 || size == 4096)){
-		
+	if(dst%256 == 0
+	&& (size == 256 || size == 512 || size == 1024 || size == 4096)){
+		int ret;
+		ret = ISP_sectorOperation(ISP_CMD_PREPARE_SECTORS,0,SECTOR_NUM-1);
+		if(ret == RET_CODE_SUCCESS){
+			char cmdStr[36];
+			sprintf(cmdStr,"%c %d %d %d\r\n",isp_cmd_list[ISP_CMD_COPY_RAM_TO_FLASH],dst,src,size);
+			pc.printf("cmd str:%s\r\n",cmdStr);
+			memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
+			isp.puts(cmdStr);
+			if(ISP_getResp(ispRecvBuf,10000) <= 0){
+				return RET_CODE_RESP_TIMEOUT;
+			}else{
+				char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
+				return ((p!=NULL)?RET_CODE_SUCCESS:RET_CODE_ERROR);
+			}		
+		}else{
+			return ret;
+		}
 	}else{
 		return RET_CODE_PARAM_ILLEGAL;
 	}

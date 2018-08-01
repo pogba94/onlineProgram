@@ -29,11 +29,12 @@ typedef enum ISP_RESULT_CODE{
 
 typedef enum BAUDRATE_SYNC_STATUS{
 	SYNC_STATUS_SETUP_SYNC = 0,
-	SYNC_STATUS_RESP_SYNC = 1,
-	SYNC_STATUS_SYNC_CONFIRM = 2,
-	SYNC_STATUS_SYNC_DONE = 3,
-	SYNC_STATUS_SYNC_TIMEOUT = 4,
-	SYNC_STATUS_SYNC_ERROR = 7,
+	SYNC_STATUS_RESP_SYNC,
+	SYNC_STATUS_SEND_FREQ,
+	SYNC_STATUS_EXIT_SYNC,
+	SYNC_STATUS_SYNC_DONE,
+	SYNC_STATUS_SYNC_TIMEOUT,
+	SYNC_STATUS_SYNC_ERROR
 }BAUDRATE_SYNC_STATUS_T;
 
 typedef enum ISP_CMD{
@@ -79,6 +80,7 @@ int ISP_getPartID(char partId[]);
 int ISP_unlock(void);
 int ISP_disableEcho(void);
 int ISP_sectorOperation(int select,int start,int end);
+int ISP_EraseSector(int start,int end);
 int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data);
-
+int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size);
 #endif
