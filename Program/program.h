@@ -83,4 +83,5 @@ int ISP_sectorOperation(int select,int start,int end);
 int ISP_EraseSector(int start,int end);
 int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data);
 int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size);
+int ISP_readMemory(uint32_t addr,uint32_t size,char *data);
 #endif

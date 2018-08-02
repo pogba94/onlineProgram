@@ -103,8 +103,18 @@ void SDFileSysTest(void)
 		pc.printf("Detect bin file,size is:%d bytes\r\n",size);
 		rewind(fp);
 		if(fread(buffer,sizeof(char),size,fp) == size){
-			pc.printf("read data from bin file\r\n");
-			
+			pc.printf("read data from bin file successfully\r\n");
+			for(int i=size;i<sizeof(buffer);i++) //filled with 0xff
+				buffer[i] = 0xff;
+			/* modify the vector at 0x1c*/
+      uint32_t tmp = 0;
+			for(int i=0;i<28;i++){
+				tmp += (uint32_t)buffer[i]<<((i%4)*8);
+			}
+			tmp = ~tmp + 1;
+			for(int i=0;i<4;i++){
+				buffer[28+i] = tmp>>(i*8);
+			}
 			/*
 			int len = size/512,extra = size%512;
 			if(extra > 0){
@@ -163,6 +173,45 @@ void ispTest(void)
 	}else{
 		pc.printf("unlock failed,ret=%d\r\n",ret);
 	}
+	
+//	ret = ISP_readMemory(0,512,buffer);
+//	if(ret != RET_CODE_SUCCESS){
+//		pc.printf("read menmory failed,ret=%d\r\n",ret);
+//	}
+//	pc.printf("read from flash:\r\n");
+//  for(int i=0;i<512;i++){
+//		if(i%16==0)
+//			pc.printf("\r\n");
+//		pc.printf("%x\t",buffer[i]);
+//	}
+//	for(;;);
+	
+	ret = ISP_EraseSector(0,SECTOR_NUM-1);
+	int num = sizeof(buffer)/512;
+	pc.printf("num:%d\r\n",num);
+	if(ret != RET_CODE_SUCCESS){
+		pc.printf("Erase flash failed\r\n");
+	}else{
+		pc.printf("Erase flash successfully\r\n");
+		ISP_unlock();
+		int offset;
+		for(int i=0;i<num;i++){
+			offset = i*512;
+			pc.printf("programing to address:%x\r\n",offset);
+			ret = ISP_WriteToRAM(0x10000300,512,buffer+offset);
+			if(ret == RET_CODE_SUCCESS){
+				ret = ISP_copyToFlash(offset,0x10000300,512);
+				if(ret == RET_CODE_SUCCESS){
+					pc.printf("program to address:%x successfully\r\n",offset);
+				}else{
+					pc.printf("program to address:%x failed\r\n",offset);
+					break;
+				}
+			}
+		}
+	}
+	for(;;);
+	
 	ret = ISP_EraseSector(0,SECTOR_NUM-1);
 	if(ret == RET_CODE_SUCCESS){
 		pc.printf("erase successfully\r\n");
@@ -182,21 +231,6 @@ void ispTest(void)
 	}else{
 		pc.printf("erase failed\r\n");
 	}
-	
-//	ret = ISP_sectorOperation(ISP_CMD_PREPARE_SECTORS,0,SECTOR_NUM-1);
-////	 ret = RET_CODE_SUCCESS;
-//	if(ret == RET_CODE_SUCCESS){
-////		pc.printf("prepare sectors successfully!\r\n");
-//		ret = ISP_sectorOperation(ISP_CMD_ERASE_SECTORS,0,SECTOR_NUM-1);
-////		ret = RET_CODE_SUCCESS;
-//		if(ret == RET_CODE_SUCCESS){
-//			pc.printf("Erase sectors successfully!\r\n");
-//		}else{
-//			pc.printf("Erase sectors failed!ret=%d\r\n");
-//		}
-//	}else{
-////		pc.printf("prepare sectors failed!ret=%d\r\n",ret);
-//	}
 }
 
 int main()
@@ -211,6 +245,7 @@ int main()
 //	lcd.locate(0,0);
 //	lcd.printf("Online Program for LPC1125");
 //	UUencodeTest();
+
 	SDFileSysTest();
 	ispTest();
 

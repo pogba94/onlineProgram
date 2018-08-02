@@ -44,16 +44,12 @@ int ISP_syncBaudRate(void)
 				if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
 					syncStatus = SYNC_STATUS_SYNC_TIMEOUT;
 				}else{
-					pc.printf("recieve data:%s\r\n",ispRecvBuf);
 					p = strstr(ispRecvBuf,BAUDRATE_SYNC_RECV_STR);
 					if(p != NULL){
 						syncStatus = SYNC_STATUS_RESP_SYNC;
 					}else{
 						p = strstr(ispRecvBuf,BAUDRATE_SYNC_SEND_STR);
-						if(p == NULL)
-							syncStatus = SYNC_STATUS_SYNC_ERROR;
-						else
-							syncStatus = SYNC_STATUS_EXIT_SYNC;
+						syncStatus = (p != NULL)?SYNC_STATUS_EXIT_SYNC:SYNC_STATUS_SYNC_ERROR;
 					}
 				}
 			  break;
@@ -64,13 +60,8 @@ int ISP_syncBaudRate(void)
 				if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
 					syncStatus = SYNC_STATUS_SYNC_TIMEOUT;
 				}else{
-					pc.printf("recieve data:%s\r\n",ispRecvBuf);
 					p = strstr(ispRecvBuf,OK_STR);
-					if(p != NULL){
-						syncStatus = SYNC_STATUS_SEND_FREQ;
-					}else{
-						syncStatus = SYNC_STATUS_SYNC_ERROR;
-					}
+					syncStatus = (p != NULL)?SYNC_STATUS_SEND_FREQ:SYNC_STATUS_SYNC_ERROR;
 				}
 				break;
 			case SYNC_STATUS_SEND_FREQ:
@@ -79,13 +70,8 @@ int ISP_syncBaudRate(void)
 				if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
 					syncStatus = SYNC_STATUS_SYNC_TIMEOUT;
 				}else{
-					pc.printf("recieve data:%s\r\n",ispRecvBuf);
 					p = strstr(ispRecvBuf,OK_STR);
-					if(p != NULL){
-						syncStatus = SYNC_STATUS_SYNC_DONE;
-					}else{
-						syncStatus = SYNC_STATUS_SYNC_ERROR;
-					}
+					syncStatus = (p != NULL)?SYNC_STATUS_SYNC_DONE:SYNC_STATUS_SYNC_ERROR;
 				}
 				break;
 			case SYNC_STATUS_EXIT_SYNC:
@@ -94,10 +80,7 @@ int ISP_syncBaudRate(void)
 				if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
 					syncStatus = SYNC_STATUS_SYNC_TIMEOUT;
 				}else{
-					if(ispRecvBuf[0] == 27)
-						syncStatus = SYNC_STATUS_SYNC_DONE;
-					else
-						syncStatus = SYNC_STATUS_SYNC_ERROR;
+					syncStatus = (ispRecvBuf[0] == 27)?SYNC_STATUS_SYNC_DONE:SYNC_STATUS_SYNC_ERROR;
 				}
 				break;
 			case SYNC_STATUS_SYNC_DONE:
@@ -162,10 +145,7 @@ int ISP_disableEcho(void)
 		return RET_CODE_RESP_TIMEOUT;
 	}else{
 		char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
-		if(p != NULL)
-			return RET_CODE_SUCCESS;
-		else
-			return RET_CODE_ERROR;
+		return ((p != NULL)?RET_CODE_SUCCESS:RET_CODE_ERROR);
 	}	
 }
 
@@ -210,10 +190,10 @@ int ISP_EraseSector(int start,int end)
 
 int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data)
 {
-	if(start_addr % 32 ==0 && size % 4 == 0 && size > 0 && size <= ISP_MAX_SIZE_WRITE && data != NULL){ //address must be a word boundary,size must be multiple of 4
+	if(CHECK_RAM_ADDR(start_addr) && start_addr % 32 ==0 && size % 4 == 0 && size > 0 && size <= ISP_MAX_SIZE_WRITE && data != NULL){ //address must be a word boundary,size must be multiple of 4
 		char cmdStr[32];
 		sprintf(cmdStr,"%c %d %d\r\n",isp_cmd_list[ISP_CMD_WRITE_TO_RAM],start_addr,size);
-		pc.printf("write cmd=%s\r\n",cmdStr);
+//		pc.printf("write cmd=%s\r\n",cmdStr);
 		memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
 		isp.puts(cmdStr);
 		if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
@@ -227,7 +207,7 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data)
 				char checksumStr[8];
 				if(encode == NULL)
 						return RET_CODE_MEM_OVERFLOW;
-				//send data that was encoded
+				/* send data encoded */
 				for(int i=0;i<num;i++){
 					if(i < num-1)
 						UUencodeLine(data+45*i,encode,45);
@@ -240,7 +220,7 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data)
 				for(int i=0;i<size;i++)
 					checksum += data[i];
 				sprintf(checksumStr,"%d\r\n",checksum);
-				pc.printf("checksum=%d\r\n",checksum);
+//				pc.printf("checksum=%d\r\n",checksum);
 				memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
 				isp.puts(checksumStr);
 				if(ISP_getResp(ispRecvBuf,1000) <= 0){
@@ -263,14 +243,14 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data)
 
 int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size)
 {
-	if(dst%256 == 0
+	if(CHECK_FLASH_ADDR(dst) && CHECK_RAM_ADDR(src) && dst%256 == 0
 	&& (size == 256 || size == 512 || size == 1024 || size == 4096)){
 		int ret;
 		ret = ISP_sectorOperation(ISP_CMD_PREPARE_SECTORS,0,SECTOR_NUM-1);
 		if(ret == RET_CODE_SUCCESS){
 			char cmdStr[36];
 			sprintf(cmdStr,"%c %d %d %d\r\n",isp_cmd_list[ISP_CMD_COPY_RAM_TO_FLASH],dst,src,size);
-			pc.printf("cmd str:%s\r\n",cmdStr);
+//			pc.printf("cmd str:%s\r\n",cmdStr);
 			memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
 			isp.puts(cmdStr);
 			if(ISP_getResp(ispRecvBuf,10000) <= 0){
@@ -281,6 +261,51 @@ int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size)
 			}		
 		}else{
 			return ret;
+		}
+	}else{
+		return RET_CODE_PARAM_ILLEGAL;
+	}
+}
+
+int ISP_readMemory(uint32_t addr,uint32_t size,char *data)
+{
+	if((CHECK_FLASH_ADDR(addr) || CHECK_RAM_ADDR(addr)) && (size%4==0) && (size>0) 
+	&& (size<=FLASH_SIZE) && (size<=RAM_SIZE) && (data!=NULL)){
+		char cmdStr[36];
+		sprintf(cmdStr,"%c %d %d\r\n",isp_cmd_list[ISP_CMD_READ_MEMORY],addr,size);
+		memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
+		isp.puts(cmdStr);
+		if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
+			return RET_CODE_RESP_TIMEOUT;
+		}else{
+			char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
+			if(p != NULL){
+				int i,checksum=0,checksumGet;
+				char checksumStr[8];
+				int UUlineNum = (size/45)+(size%45!=0);
+				int lastUUlineSize = (size%45)==0?45:(size%45);
+				p += 3;//point to UUencode data
+				for(i=0;i<UUlineNum;i++){
+					UUdecodeLine(p+63*i,data+45*i);
+				}
+				for(i=0;i<size;i++)
+					checksum += data[i];
+				pc.printf("checksum=%d\r\n",checksum);
+				p = strstr(p+63*(UUlineNum-1),"\r\n")+2; //point to checksum
+				checksumGet = atoi(p);
+				pc.printf("get checksum=%d\r\n",checksumGet);
+				if(checksum == checksumGet){
+					pc.printf("read successfully\r\n");
+					isp.puts(OK_STR);
+					isp.puts(ENDCODE_STR);
+					return RET_CODE_SUCCESS;
+				}else{
+					pc.printf("checksum is defferent\r\n");
+					return RET_CODE_ERROR;
+				}
+			}else{
+				return RET_CODE_ERROR;
+			}
 		}
 	}else{
 		return RET_CODE_PARAM_ILLEGAL;
