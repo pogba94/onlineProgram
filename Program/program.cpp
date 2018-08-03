@@ -15,7 +15,7 @@ extern Serial pc;
 char ispRecvBuf[ISP_RECV_BUF_SIZE]; //uart recieve buffer
 
 
-int ISP_getResp(char *buf,uint32_t timeout_us)
+static int ISP_getResp(char *buf,uint32_t timeout_us)
 {
 	int count = 0,pStr = 0;
 	if(NULL == buf)
@@ -188,12 +188,11 @@ int ISP_EraseSector(int start,int end)
 	}
 }
 
-int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data)
+int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,const char *data)
 {
 	if(CHECK_RAM_ADDR(start_addr) && start_addr % 32 ==0 && size % 4 == 0 && size > 0 && size <= ISP_MAX_SIZE_WRITE && data != NULL){ //address must be a word boundary,size must be multiple of 4
 		char cmdStr[32];
 		sprintf(cmdStr,"%c %d %d\r\n",isp_cmd_list[ISP_CMD_WRITE_TO_RAM],start_addr,size);
-//		pc.printf("write cmd=%s\r\n",cmdStr);
 		memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
 		isp.puts(cmdStr);
 		if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
@@ -201,10 +200,11 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data)
 		}else{
 			char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
 			if(p != NULL){
-				int num = size/45,extra = size%45,checksum = 0;
+				int num = size/45,extra = size%45;
+				uint32_t checksum =0;
 				num += (extra==0?0:1);
 				char *encode = (char*)malloc(64);
-				char checksumStr[8];
+				char checksumStr[12];
 				if(encode == NULL)
 						return RET_CODE_MEM_OVERFLOW;
 				/* send data encoded */
@@ -217,10 +217,12 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data)
 					wait_ms(10);  //may be unnecessary
 				}
 				/* send checksum that is the sum of data to be sent */
-				for(int i=0;i<size;i++)
+				for(int i=0;i<size;i++){
 					checksum += data[i];
+					pc.printf("%d\t",data[i]);
+				}
+				pc.printf("checksum=%d\r\n",checksum);
 				sprintf(checksumStr,"%d\r\n",checksum);
-//				pc.printf("checksum=%d\r\n",checksum);
 				memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
 				isp.puts(checksumStr);
 				if(ISP_getResp(ispRecvBuf,1000) <= 0){
@@ -250,7 +252,6 @@ int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size)
 		if(ret == RET_CODE_SUCCESS){
 			char cmdStr[36];
 			sprintf(cmdStr,"%c %d %d %d\r\n",isp_cmd_list[ISP_CMD_COPY_RAM_TO_FLASH],dst,src,size);
-//			pc.printf("cmd str:%s\r\n",cmdStr);
 			memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
 			isp.puts(cmdStr);
 			if(ISP_getResp(ispRecvBuf,10000) <= 0){
@@ -290,17 +291,17 @@ int ISP_readMemory(uint32_t addr,uint32_t size,char *data)
 				}
 				for(i=0;i<size;i++)
 					checksum += data[i];
-				pc.printf("checksum=%d\r\n",checksum);
+
 				p = strstr(p+63*(UUlineNum-1),"\r\n")+2; //point to checksum
 				checksumGet = atoi(p);
-				pc.printf("get checksum=%d\r\n",checksumGet);
+				
 				if(checksum == checksumGet){
-					pc.printf("read successfully\r\n");
+//					pc.printf("read successfully\r\n");
 					isp.puts(OK_STR);
 					isp.puts(ENDCODE_STR);
 					return RET_CODE_SUCCESS;
 				}else{
-					pc.printf("checksum is defferent\r\n");
+//					pc.printf("checksum is defferent\r\n");
 					return RET_CODE_ERROR;
 				}
 			}else{

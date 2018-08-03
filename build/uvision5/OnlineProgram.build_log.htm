@@ -28,21 +28,14 @@ Project File Date:  07/31/2018
 *** Using Compiler 'V5.06 update 4 (build 422)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'OnlineProgram'
 compiling main.cpp...
-.\TargetBoard\LPC1125_FlashMap.h(16): warning:  #1-D: last line of file ends without a newline
-  #endif
-.\UUencode\UUencode.h(10): warning:  #1-D: last line of file ends without a newline
-  #endif
-main.cpp(100): warning:  #177-D: variable "checksum"  was declared but never referenced
-  		int checksum = 0;
-main.cpp(215): warning:  #111-D: statement is unreachable
-  	ret = ISP_EraseSector(0,SECTOR_NUM-1);
-main.cpp(254): warning:  #1-D: last line of file ends without a newline
-  }
-main.cpp: 5 warnings, 0 errors
+main.cpp(228): warning:  #186-D: pointless comparison of unsigned integer with zero
+  	if(!
+HECK_FLASH_ADDR(addr) || addr%16!=0 || id == NULL || size <= 0)
+main.cpp: 1 warning, 0 errors
 linking...
-Program Size: Code=47602 RO-data=7306 RW-data=240 ZI-data=13092  
+Program Size: Code=49114 RO-data=7414 RW-data=248 ZI-data=9028  
 After Build - User command #1: fromelf --bin -o .\build\uvision5\bin\OnlineProgram.bin .\build\uvision5\OnlineProgram.axf
-".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 5 Warning(s).
+".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\_OnlineProgram

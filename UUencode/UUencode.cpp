@@ -23,7 +23,7 @@ static void UUencodeBase(const char in[],char out[])
 /**
 *  @brief convert 4 uu-encode string to 3 assic string 
 */
-void UUdecodeBase(const char in[],char out[])
+static void UUdecodeBase(const char in[],char out[])
 {
 	out[0] = (UU_DECODE_BYTE(in[0])<<2) + ((UU_DECODE_BYTE(in[1])&0x30)>>4);
 	out[1] = ((UU_DECODE_BYTE(in[1])&0x0F)<<4) + ((UU_DECODE_BYTE(in[2])&0x3C)>>2);
@@ -86,6 +86,10 @@ int UUdecodeLine(const char* input,char* output)
 }
 
 #define UU_TXT_SIZE     (44)
+
+/**
+	@brief test function for uu-encode
+*/
 void UUencodeTest(void)
 {
 	pc.printf("UUencode test!\r\n");

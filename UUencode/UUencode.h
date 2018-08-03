@@ -6,5 +6,5 @@
 int UUencodeLine(const char* input,char* output,uint8_t len);
 int UUdecodeLine(const char* input,char* output);
 void UUencodeTest(void);
-void UUdecodeBase(const char in[],char out[]);
+
 #endif

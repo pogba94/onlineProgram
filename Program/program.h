@@ -72,8 +72,8 @@ typedef enum RET_CODE
 #define   DISABLE_ECHO_CMD_STR            "A 0\r\n"
 #define   CMD_SUCCESS_RESP_STR            "0\r\n"
 
-#define   ISP_MAX_SIZE_WRITE                     (512)
-#define   ISP_MAX_SIZE_COPY                      (1024) 
+#define   ISP_MAX_SIZE_WRITE              (512)
+#define   ISP_MAX_SIZE_COPY               (1024) 
 
 int ISP_syncBaudRate(void);
 int ISP_getPartID(char partId[]);
@@ -81,7 +81,8 @@ int ISP_unlock(void);
 int ISP_disableEcho(void);
 int ISP_sectorOperation(int select,int start,int end);
 int ISP_EraseSector(int start,int end);
-int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,char *data);
+int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,const char *data);
 int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size);
 int ISP_readMemory(uint32_t addr,uint32_t size,char *data);
+
 #endif
