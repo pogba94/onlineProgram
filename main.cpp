@@ -17,7 +17,8 @@ DigitalOut red(LED_RED);
 InterruptIn sw2(SW2);
 SDFileSystem sd(PTE3, PTE1, PTE2, PTE4, "sd"); // MOSI, MISO, SCK, CS
 FILE *fp;
-char buffer[4096];
+
+char buffer[512];
 char binFilePath[36];
 //C12832 lcd(D11,D13,D12,D7,D10);
 
@@ -30,33 +31,17 @@ char binFilePath[36];
 #define  DEBUG_UART_BAUD_RATE     (115200)
 #define  ISP_UART_BAUD_RATE       (115200)
 
-#define  BLUE_LED_ON              (blue=0)
-#define  BLUE_LED_OFF             (blue=1)
-#define  RED_LED_ON               (red=0)
-#define  RED_LED_OFF              (red=1)
-#define  GREEN_LED_ON             (green=0)
-#define  GREEN_LED_OFF            (green=1)
-
-
 /*sw2 irq handler */
 void sw2_release()
 {
 	blue = !blue;
 }
 
-void ledBrinky(void)
-{
-	while(1){
-		blue = !blue;
-		wait_ms(100);
-	}
-}
-
 void ledInit(void)
 {
-	BLUE_LED_OFF;
-	RED_LED_OFF;
-	GREEN_LED_OFF;
+	red =1;
+	green = 1;
+	blue = 1;
 }
 
 int detectBinFile(const char *dir,char *path)
@@ -182,11 +167,11 @@ int programBinFile(const char *path)
 				buffer[28+j] = tmp>>(j*8);
 			}
 		}
-		if(ISP_WriteToRAM((RAM_START_ADDRESS+0x300),512,buffer)!= RET_CODE_SUCCESS){
+		if(ISP_WriteToRAM(ISP_WRITE_RAM_ADDR,512,buffer)!= RET_CODE_SUCCESS){
 			ret = -7;
 			goto Exit;
 		}
-		if(ISP_copyToFlash(i*512,(RAM_START_ADDRESS+0x300),512) != RET_CODE_SUCCESS){
+		if(ISP_copyToFlash(i*512,ISP_WRITE_RAM_ADDR,512) != RET_CODE_SUCCESS){
 			ret = -8;
 			goto Exit;
 		}
@@ -228,63 +213,48 @@ int programUID(uint32_t addr,const char id[],uint8_t size)
 	if(!CHECK_FLASH_ADDR(addr) || addr%16!=0 || id == NULL || size <= 0)
 		return -1;
 	if(addr+size > FLASH_END_ADDRESS)
-		return -2;
+		return -2;	
 	
-	char *buffer = (char*)malloc(512);
-	if(buffer == NULL)
-		return -3;
-	
-	for(i=0;i<512;i++)
-		buffer[i] = 0xff;
-	
-	int offset = addr%256;
+	int offset = addr%512;
 	uint32_t programAddr = (addr/512)*512;
 	int sectorIndex = addr/SECTOR_SIZE;
 	uint32_t checksumR=0,checksumW = 0;
 	int ret;
 	
+	memset(buffer,0xff,512);
 	for(i=0;i<size;i++)
 		buffer[offset+i] = id[i];
 	
-//	for(i=0;i<512;i++)
-//		checksumW += buffer[i]; 
-//	pc.printf("checksum1:%d\r\n",checksumW);
 	/* Erase sector */
 	ISP_unlock();
 	if(ISP_EraseSector(sectorIndex,sectorIndex) != RET_CODE_SUCCESS){
-		ret = -4;
-		goto Exit;
+		return -3;
 	}
 	/* program */
 	ISP_unlock();
-
-	if(ISP_WriteToRAM((RAM_START_ADDRESS+0x300),512,buffer) != RET_CODE_SUCCESS){
-		ret = -5;
-		goto Exit;
+	if(ISP_WriteToRAM(ISP_WRITE_RAM_ADDR,512,buffer) != RET_CODE_SUCCESS){
+		return -4;
 	}
-	if(ISP_copyToFlash(programAddr,(RAM_START_ADDRESS+0x300),512) != RET_CODE_SUCCESS){
-		ret = -6;
-		goto Exit;
+	if(ISP_copyToFlash(programAddr,ISP_WRITE_RAM_ADDR,512) != RET_CODE_SUCCESS){
+		return -5;
 	}
 	/* Verify */
 	for(i=0;i<512;i++)
-		checksumW += buffer[i]; 
+		checksumW += buffer[i];
+//  pc.printf("checksumW:%d\r\n",checksumW);	
 	if(ISP_readMemory(programAddr,512,buffer) != RET_CODE_SUCCESS){
-		ret = -7;
-		goto Exit;
+		return -6;
 	}
-	for(i=0;i<512;i++)
+	for(i=0;i<512;i++){
 		checksumR += buffer[i];
+//		if(i%16==0){pc.printf("\r\n");}
+//		pc.printf("%x\t",buffer[i]);
+	}
+//  pc.printf("checksumR:%d\r\n",checksumR);	
 	if(checksumW != checksumR){
-		ret = -8;
-		goto Exit;
+		return -7;
 	}
 	return 0;
-	Exit:
-	{
-		free(buffer);
-		return ret;
-	}
 }
 
 
@@ -458,7 +428,7 @@ int main()
 //	SDFileSysTest();
 //	ispTest();
 	pc.printf("wait for SD card Initializing...\r\n");
-	wait(2);	
+	wait(2);
 	
 	if(!detectBinFile(SD_DISK_NAME,binFilePath)){
 		pc.printf("Dectect bin file in sd card\r\nbin file:%s\r\n",binFilePath);
@@ -471,7 +441,7 @@ int main()
 //			}
 			char uid[] = "abcdefghijklmnopqrstyvw";
 			int ret;
-			ret = programUID(0xF110,uid,strlen(uid));
+			ret = programUID(0xE160,uid,strlen(uid));
 			if(!ret){
 				pc.printf("program uid successfully!\r\n");
 			}else{

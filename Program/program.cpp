@@ -5,9 +5,6 @@
 #include "LPC1125_FlashMap.h"
 #include "UUencode.h"
 
-#define  ISP_RECV_BUF_SIZE            (1024)
-#define  ISP_UART_RECV_TIMEOUT_US     (500)
-
 char isp_cmd_list[] = {'U','B','A','W','R','P','C','G','E','I','J','K','M','N'};
 
 extern Serial isp;
@@ -149,42 +146,46 @@ int ISP_disableEcho(void)
 	}	
 }
 
-int ISP_sectorOperation(int select,int start,int end)
+int ISP_prepareSectors(uint8_t start,uint8_t end)
 {
-	if(start >=0 && end <= SECTOR_NUM - 1){
-		char cmdStr[8];
-		int timeout;
-		if(select == ISP_CMD_PREPARE_SECTORS){
-			sprintf(cmdStr,"%c %d %d\r\n",isp_cmd_list[ISP_CMD_PREPARE_SECTORS],start,end);
-			timeout = 500;
-	  }else if(select == ISP_CMD_ERASE_SECTORS){
-			sprintf(cmdStr,"%c %d %d\r\n",isp_cmd_list[ISP_CMD_ERASE_SECTORS],start,end);
-			timeout = 120000; //120 ms
-		}else{
-			return RET_CODE_PARAM_ILLEGAL;
-		}
-		memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
-		isp.puts(cmdStr);
-		if(ISP_getResp(ispRecvBuf,timeout) <= 0){
-			return RET_CODE_RESP_TIMEOUT;
-		}else{
-			char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
-			return ((p != NULL)?RET_CODE_SUCCESS:RET_CODE_ERROR);
-		}
-	}else{
+	if(start>end || end>SECTOR_NUM-1)
 		return RET_CODE_PARAM_ILLEGAL;
+	char cmd[12];
+	sprintf(cmd,"%c %d %d\r\n",isp_cmd_list[ISP_CMD_PREPARE_SECTORS],start,end);
+	memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
+	isp.puts(cmd);
+	if(ISP_getResp(ispRecvBuf,ISP_UART_RECV_TIMEOUT_US) <= 0){
+			return RET_CODE_RESP_TIMEOUT;
+	}else{
+		char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
+		return ((p != NULL)?RET_CODE_SUCCESS:RET_CODE_ERROR);
+	}
+}
+
+int ISP_eraseSectors(uint8_t start,uint8_t end)
+{
+	if(start>end || end>SECTOR_NUM-1)
+		return RET_CODE_PARAM_ILLEGAL;
+	char cmd[12];
+	sprintf(cmd,"%c %d %d\r\n",isp_cmd_list[ISP_CMD_ERASE_SECTORS],start,end);
+	memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
+	isp.puts(cmd);
+	if(ISP_getResp(ispRecvBuf,ISP_ERASE_WAIT_TIMEOUT_US) <= 0){
+			return RET_CODE_RESP_TIMEOUT;
+	}else{
+		char *p = strstr(ispRecvBuf,CMD_SUCCESS_RESP_STR);
+		return ((p != NULL)?RET_CODE_SUCCESS:RET_CODE_ERROR);
 	}
 }
 
 int ISP_EraseSector(int start,int end)
 {
 	int ret;
-	ret = ISP_sectorOperation(ISP_CMD_PREPARE_SECTORS,start,end);
-	if(ret == RET_CODE_SUCCESS){
-		ret = ISP_sectorOperation(ISP_CMD_ERASE_SECTORS,start,end);
+	ret = ISP_prepareSectors(start,end);
+	if(ret != RET_CODE_SUCCESS){
 		return ret;
 	}else{
-		return ret;
+		return ISP_eraseSectors(start,end);
 	}
 }
 
@@ -214,14 +215,13 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,const char *data)
 					else
 						UUencodeLine(data+45*i,encode,extra);
 					isp.puts(encode);
-					wait_ms(10);  //may be unnecessary
+//					wait_ms(5);  //may be unnecessary
 				}
+				free(encode);
 				/* send checksum that is the sum of data to be sent */
 				for(int i=0;i<size;i++){
 					checksum += data[i];
-					pc.printf("%d\t",data[i]);
 				}
-				pc.printf("checksum=%d\r\n",checksum);
 				sprintf(checksumStr,"%d\r\n",checksum);
 				memset(ispRecvBuf,0x0,sizeof(ispRecvBuf));
 				isp.puts(checksumStr);
@@ -233,22 +233,19 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,const char *data)
 				}
 			}else{
 				return RET_CODE_ERROR;
-			}
+			} 
 		}
 	}else{
 		return RET_CODE_PARAM_ILLEGAL;
 	}
 }
 
-
-
-
 int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size)
 {
 	if(CHECK_FLASH_ADDR(dst) && CHECK_RAM_ADDR(src) && dst%256 == 0
 	&& (size == 256 || size == 512 || size == 1024 || size == 4096)){
 		int ret;
-		ret = ISP_sectorOperation(ISP_CMD_PREPARE_SECTORS,0,SECTOR_NUM-1);
+		ret = ISP_prepareSectors(0,SECTOR_NUM-1);
 		if(ret == RET_CODE_SUCCESS){
 			char cmdStr[36];
 			sprintf(cmdStr,"%c %d %d %d\r\n",isp_cmd_list[ISP_CMD_COPY_RAM_TO_FLASH],dst,src,size);
@@ -296,12 +293,10 @@ int ISP_readMemory(uint32_t addr,uint32_t size,char *data)
 				checksumGet = atoi(p);
 				
 				if(checksum == checksumGet){
-//					pc.printf("read successfully\r\n");
 					isp.puts(OK_STR);
 					isp.puts(ENDCODE_STR);
 					return RET_CODE_SUCCESS;
 				}else{
-//					pc.printf("checksum is defferent\r\n");
 					return RET_CODE_ERROR;
 				}
 			}else{

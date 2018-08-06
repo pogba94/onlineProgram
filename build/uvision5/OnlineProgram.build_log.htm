@@ -17,25 +17,34 @@ Library Manager: ArmAr.exe V5.06 update 4 (build 422)
 Hex Converter:   FromElf.exe V5.06 update 4 (build 422)
 CPU DLL:         SARMCM3.DLL V5.23
 Dialog DLL:      DCM.DLL V1.15.0.0
-Target DLL:      CMSIS_AGDI.dll V1.27.5.0
+Target DLL:      Segger\JL2CM3.dll V2.99.23.0
 Dialog DLL:      TCM.DLL V1.27.0.0
  
 <h2>Project:</h2>
 D:\WPI\Project\SW-Online-program\V2.0\OnlineProgram\OnlineProgram.uvprojx
-Project File Date:  07/31/2018
+Project File Date:  08/05/2018
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 4 (build 422)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'OnlineProgram'
-compiling main.cpp...
-main.cpp(228): warning:  #186-D: pointless comparison of unsigned integer with zero
-  	if(!
-HECK_FLASH_ADDR(addr) || addr%16!=0 || id == NULL || size <= 0)
-main.cpp: 1 warning, 0 errors
+compiling program.cpp...
+Program\program.cpp(245): warning:  #186-D: pointless comparison of unsigned integer with zero
+  	if(
+HECK_FLASH_ADDR(dst) && CHECK_RAM_ADDR(src) && dst%256 == 0
+Program\program.cpp(270): warning:  #186-D: pointless comparison of unsigned integer with zero
+  	if((
+HECK_FLASH_ADDR(addr) || CHECK_RAM_ADDR(addr)) && (size%4==0) && (size>0) 
+Program\program.cpp(282): warning:  #177-D: variable "checksumStr"  was declared but never referenced
+  				char checksumStr[8];
+Program\program.cpp(284): warning:  #177-D: variable "lastUUlineSize"  was declared but never referenced
+  				int lastUUlineSize = (size%45)==0?45:(size%45);
+Program\program.cpp(309): warning:  #1-D: last line of file ends without a newline
+  }
+Program\program.cpp: 5 warnings, 0 errors
 linking...
-Program Size: Code=49114 RO-data=7414 RW-data=248 ZI-data=9028  
+Program Size: Code=49230 RO-data=7414 RW-data=248 ZI-data=9540  
 After Build - User command #1: fromelf --bin -o .\build\uvision5\bin\OnlineProgram.bin .\build\uvision5\OnlineProgram.axf
-".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 1 Warning(s).
+".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\_OnlineProgram

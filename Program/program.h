@@ -2,6 +2,7 @@
 #define _PROGRAM_H
 
 #include "mbed.h"
+#include "LPC1125_FlashMap.h"
 
 typedef enum ISP_RESULT_CODE{
 	ISP_CMD_SUCCESS = 0,
@@ -73,13 +74,18 @@ typedef enum RET_CODE
 #define   CMD_SUCCESS_RESP_STR            "0\r\n"
 
 #define   ISP_MAX_SIZE_WRITE              (512)
-#define   ISP_MAX_SIZE_COPY               (1024) 
+#define   ISP_MAX_SIZE_COPY               (1024)
+#define   ISP_WRITE_RAM_ADDR              (RAM_START_ADDRESS+0x300)
+#define   ISP_ERASE_WAIT_TIMEOUT_US       (120000)           
+#define   ISP_UART_RECV_TIMEOUT_US        (500)
+#define   ISP_RECV_BUF_SIZE               (1024)
 
 int ISP_syncBaudRate(void);
 int ISP_getPartID(char partId[]);
 int ISP_unlock(void);
 int ISP_disableEcho(void);
-int ISP_sectorOperation(int select,int start,int end);
+int ISP_prepareSectors(uint8_t start,uint8_t end);
+int ISP_eraseSectors(uint8_t start,uint8_t end);
 int ISP_EraseSector(int start,int end);
 int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,const char *data);
 int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size);

@@ -394,6 +394,16 @@
               <FileType>5</FileType>
               <FilePath>UserConfig.h</FilePath>
             </File>
+            <File>
+              <FileName>indicator.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\indicator.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>indicator.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\indicator.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
