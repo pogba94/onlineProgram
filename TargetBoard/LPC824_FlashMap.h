@@ -1,9 +1,9 @@
-#ifndef _LPC1125_FLASHMAP_H
-#define _LPC1125_FLASHMAP_H
+#ifndef _LPC824_FLASHMAP_H
+#define _LPC824_FLASHMAP_H
 
 /* memory map */
-#define  SECTOR_NUM                       16  
-#define  SECTOR_SIZE                      4096
+#define  SECTOR_NUM                       32  
+#define  SECTOR_SIZE                      1024
 #define  FLASH_SIZE                       (SECTOR_NUM*SECTOR_SIZE)
 #define  FLASH_START_ADDRESS              0x0
 #define  FLASH_END_ADDRESS                (FLASH_START_ADDRESS + FLASH_SIZE - 1)

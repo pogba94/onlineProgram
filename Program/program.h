@@ -2,7 +2,8 @@
 #define _PROGRAM_H
 
 #include "mbed.h"
-#include "LPC1125_FlashMap.h"
+//#include "LPC1125_FlashMap.h"
+#include "LPC824_FlashMap.h"
 
 typedef enum ISP_RESULT_CODE{
 	ISP_CMD_SUCCESS = 0,
@@ -65,6 +66,10 @@ typedef enum RET_CODE
 	RET_CODE_WRITE_FAIL = -5
 }RET_CODE_T;
 
+/* check if address of flash or ram is illegal */
+#define  CHECK_RAM_ADDR(x)        				(x>=RAM_START_ADDRESS&&x<=RAM_END_ADDRESS)
+#define  CHECK_FLASH_ADDR(x)              (x>=FLASH_START_ADDRESS&&x<=FLASH_END_ADDRESS)
+
 #define   BAUDRATE_SYNC_SEND_STR          "?"
 #define   BAUDRATE_SYNC_RECV_STR          "Synchronized"
 #define   OK_STR                          "OK"
@@ -86,7 +91,7 @@ int ISP_unlock(void);
 int ISP_disableEcho(void);
 int ISP_prepareSectors(uint8_t start,uint8_t end);
 int ISP_eraseSectors(uint8_t start,uint8_t end);
-int ISP_EraseSector(int start,int end);
+int ISP_erase(uint8_t start,uint8_t end);
 int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,const char *data);
 int ISP_copyToFlash(uint32_t dst,uint32_t src,uint16_t size);
 int ISP_readMemory(uint32_t addr,uint32_t size,char *data);

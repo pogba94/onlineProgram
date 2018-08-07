@@ -429,6 +429,11 @@
               <FileType>5</FileType>
               <FilePath>.\TargetBoard\LPC1125_FlashMap.h</FilePath>
             </File>
+            <File>
+              <FileName>LPC824_FlashMap.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\TargetBoard\LPC824_FlashMap.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

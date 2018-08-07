@@ -2,7 +2,6 @@
 #include "mbed.h"
 #include "string.h"
 #include "stdlib.h"
-#include "LPC1125_FlashMap.h"
 #include "UUencode.h"
 
 char isp_cmd_list[] = {'U','B','A','W','R','P','C','G','E','I','J','K','M','N'};
@@ -81,13 +80,13 @@ int ISP_syncBaudRate(void)
 				}
 				break;
 			case SYNC_STATUS_SYNC_DONE:
-				pc.printf("Baudrate synchronize done!\r\n");
+//				pc.printf("Baudrate synchronize done!\r\n");
 				return RET_CODE_SUCCESS;
 			case SYNC_STATUS_SYNC_TIMEOUT:
-				pc.printf("Baudrate synchronize timeout!\r\n");
+//				pc.printf("Baudrate synchronize timeout!\r\n");
 				return RET_CODE_RESP_TIMEOUT;
 			case SYNC_STATUS_SYNC_ERROR:
-				pc.printf("Baudrate synchronize error!\r\n");
+//				pc.printf("Baudrate synchronize error!\r\n");
 				return RET_CODE_ERROR;
 			default:
 				return 0;
@@ -178,7 +177,7 @@ int ISP_eraseSectors(uint8_t start,uint8_t end)
 	}
 }
 
-int ISP_EraseSector(int start,int end)
+int ISP_erase(uint8_t start,uint8_t end)
 {
 	int ret;
 	ret = ISP_prepareSectors(start,end);
@@ -215,7 +214,6 @@ int ISP_WriteToRAM(uint32_t start_addr,uint32_t size,const char *data)
 					else
 						UUencodeLine(data+45*i,encode,extra);
 					isp.puts(encode);
-//					wait_ms(5);  //may be unnecessary
 				}
 				free(encode);
 				/* send checksum that is the sum of data to be sent */

@@ -1,13 +1,13 @@
 1. Function Description
-==============================================================
-(1) Program Firmware to target board by ISP UART
+=====================================================================
+(1) Program Firmware or UID to target board in ISP way  
 (2) LCD Display  
-(3) Network supported by ethernet
+(3) Network supported,using ethernet
 (4) mbed OS
-(5) FATFS supported
+(5) FATFS supported,store bin file using for programing in sd card
 
 2. How to work
-==============================================================
+=====================================================================
 (1) Download the code to the board FRDM-K64
 (2) Connect FRDM-K64 board and target board by UART cable included TX¡¢RX and GND
 (3) Plug the ethernet cable and make sure the network is connected
