@@ -2,8 +2,8 @@
 #define _PROGRAM_H
 
 #include "mbed.h"
-//#include "LPC1125_FlashMap.h"
-#include "LPC824_FlashMap.h"
+#include "LPC1125_FlashMap.h"
+//#include "LPC824_FlashMap.h"
 
 typedef enum ISP_RESULT_CODE{
 	ISP_CMD_SUCCESS = 0,

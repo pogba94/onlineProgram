@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\build\uvision5\OnlineProgram.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\build\uvision5\OnlineProgram.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Tue Aug 07 18:18:42 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Wed Aug 08 14:51:17 2018
 <BR><P>
 <H3>Maximum Stack Usage =       1688 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -15,7 +15,7 @@ Mutually Recursive functions
  <LI><a href="#[24c]">serial_init</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[1da]">CLOCK_GetFreq</a><BR>
  <LI><a href="#[1d6]">CLOCK_SetPbeMode</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[185]">__aeabi_assert</a><BR>
  <LI><a href="#[1d2]">CLOCK_BootToPeeMode</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[185]">__aeabi_assert</a><BR>
- <LI><a href="#[218]">wait_ms</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[ca]">us_ticker_read</a><BR>
+ <LI><a href="#[276]">mbed_die</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[230]">wait_ms</a><BR>
  <LI><a href="#[273]">mbed_assert_internal</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[276]">mbed_die</a><BR>
  <LI><a href="#[24f]">core_util_critical_section_enter</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[273]">mbed_assert_internal</a><BR>
  <LI><a href="#[285]">mbed_error_printf</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[24c]">serial_init</a><BR>
@@ -1104,7 +1104,7 @@ Global Symbols
 <LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fclose_internal
 <LI><a href="#[1b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__cxa_finalize
 <LI><a href="#[1b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_terminateio
-<LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;operator delete (void*)
+<LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;operator delete (void*)
 </UL>
 
 <P><STRONG><a name="[155]"></a>vsprintf</STRONG> (Thumb, 32 bytes, Stack size 16 bytes, vsprintf.o(.text))
@@ -1125,15 +1125,15 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_char_file
 </UL>
 <BR>[Called By]<UL><LI><a href="#[210]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::Stream::printf(const char*, ...)
-<LI><a href="#[223]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 <LI><a href="#[222]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
-<LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
-<LI><a href="#[230]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v1()
-<LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
-<LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_initialize()
-<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
 <LI><a href="#[221]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
-<LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
+<LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v1()
+<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
+<LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_initialize()
+<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
+<LI><a href="#[220]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<LI><a href="#[223]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 </UL>
 
 <P><STRONG><a name="[159]"></a>__2sprintf</STRONG> (Thumb, 38 bytes, Stack size 32 bytes, __2sprintf.o(.text))
@@ -1143,7 +1143,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_sputc
 <LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_char_common
 </UL>
-<BR>[Called By]<UL><LI><a href="#[21a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
+<BR>[Called By]<UL><LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
 <LI><a href="#[211]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_erase(unsigned char, unsigned char)
 <LI><a href="#[214]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_copyToFlash(unsigned, unsigned, unsigned short)
 <LI><a href="#[20d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_readMemory(unsigned, unsigned, char*)
@@ -1480,9 +1480,9 @@ Global Symbols
 <P><STRONG><a name="[1ed]"></a>strstr</STRONG> (Thumb, 36 bytes, Stack size 12 bytes, strstr.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = strstr
 </UL>
-<BR>[Called By]<UL><LI><a href="#[21a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
+<BR>[Called By]<UL><LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
 <LI><a href="#[211]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_erase(unsigned char, unsigned char)
-<LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
+<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
 <LI><a href="#[214]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_copyToFlash(unsigned, unsigned, unsigned short)
 <LI><a href="#[20d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_readMemory(unsigned, unsigned, char*)
 <LI><a href="#[20c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_WriteToRAM(unsigned, unsigned, const char*)
@@ -1534,9 +1534,9 @@ Global Symbols
 <P><STRONG><a name="[2e1]"></a>_memcpy_lastbytes_aligned</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_w.o(.text), UNUSED)
 
 <P><STRONG><a name="[18d]"></a>__aeabi_memclr</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_memclr.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[21a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
+<BR><BR>[Called By]<UL><LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
 <LI><a href="#[211]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_erase(unsigned char, unsigned char)
-<LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
+<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
 <LI><a href="#[214]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_copyToFlash(unsigned, unsigned, unsigned short)
 <LI><a href="#[20d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_readMemory(unsigned, unsigned, char*)
 <LI><a href="#[20c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_WriteToRAM(unsigned, unsigned, const char*)
@@ -2766,7 +2766,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[20f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;programBinFile(const char*)
 </UL>
 
-<P><STRONG><a name="[20f]"></a>programBinFile(const char*)</STRONG> (Thumb, 898 bytes, Stack size 64 bytes, main.o(i._Z14programBinFilePKc))
+<P><STRONG><a name="[20f]"></a>programBinFile(const char*)</STRONG> (Thumb, 902 bytes, Stack size 64 bytes, main.o(i._Z14programBinFilePKc))
 <BR><BR>[Stack]<UL><LI>Max Depth = 800 + Unknown Stack Size
 <LI>Call Chain = programBinFile(const char*) &rArr; ISP_WriteToRAM(unsigned, unsigned, const char*) &rArr; ISP_getResp(char*, unsigned) &rArr; wait_us &rArr; us_ticker_read &rArr; us_ticker_init &rArr; CLOCK_GetFreq &rArr; CLOCK_GetOutClkFreq &rArr; CLOCK_GetPll0Freq &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
@@ -2802,18 +2802,17 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[20f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;programBinFile(const char*)
 </UL>
 
-<P><STRONG><a name="[215]"></a>Indicator_noBin()</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, indicator.o(i._Z15Indicator_noBinv))
+<P><STRONG><a name="[215]"></a>Indicator_noBin()</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, indicator.o(i._Z15Indicator_noBinv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 320 + Unknown Stack Size
 <LI>Call Chain = Indicator_noBin() &rArr; gpio_write &rArr; mbed_assert_internal &rArr;  mbed_die (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
-<LI><a href="#[217]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_read
+<BR>[Calls]<UL><LI><a href="#[217]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_read
 <LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 </UL>
 
-<P><STRONG><a name="[219]"></a>ISP_syncBaudRate()</STRONG> (Thumb, 390 bytes, Stack size 24 bytes, program.o(i._Z16ISP_syncBaudRatev))
+<P><STRONG><a name="[218]"></a>ISP_syncBaudRate()</STRONG> (Thumb, 390 bytes, Stack size 24 bytes, program.o(i._Z16ISP_syncBaudRatev))
 <BR><BR>[Stack]<UL><LI>Max Depth = 648 + Unknown Stack Size
 <LI>Call Chain = ISP_syncBaudRate() &rArr; wait_us &rArr; us_ticker_read &rArr; us_ticker_init &rArr; CLOCK_GetFreq &rArr; CLOCK_GetOutClkFreq &rArr; CLOCK_GetPll0Freq &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
@@ -2828,7 +2827,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 </UL>
 
-<P><STRONG><a name="[21a]"></a>ISP_prepareSectors(unsigned char, unsigned char)</STRONG> (Thumb, 94 bytes, Stack size 24 bytes, program.o(i._Z18ISP_prepareSectorshh), UNUSED)
+<P><STRONG><a name="[219]"></a>ISP_prepareSectors(unsigned char, unsigned char)</STRONG> (Thumb, 94 bytes, Stack size 24 bytes, program.o(i._Z18ISP_prepareSectorshh), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_getResp(char*, unsigned)
 <LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::Stream::puts(const char*)
 <LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
@@ -2836,7 +2835,7 @@ Global Symbols
 <LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strstr
 </UL>
 
-<P><STRONG><a name="[21b]"></a>Indicator_connected()</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, indicator.o(i._Z19Indicator_connectedv))
+<P><STRONG><a name="[21a]"></a>Indicator_connected()</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, indicator.o(i._Z19Indicator_connectedv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 320 + Unknown Stack Size
 <LI>Call Chain = Indicator_connected() &rArr; gpio_write &rArr; mbed_assert_internal &rArr;  mbed_die (Cycle)
 </UL>
@@ -2845,18 +2844,17 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 </UL>
 
-<P><STRONG><a name="[213]"></a>Indicator_programing()</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, indicator.o(i._Z20Indicator_programingv))
+<P><STRONG><a name="[213]"></a>Indicator_programing()</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, indicator.o(i._Z20Indicator_programingv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 320 + Unknown Stack Size
 <LI>Call Chain = Indicator_programing() &rArr; gpio_write &rArr; mbed_assert_internal &rArr;  mbed_die (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
-<LI><a href="#[217]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_read
+<BR>[Calls]<UL><LI><a href="#[217]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_read
 <LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
 </UL>
 <BR>[Called By]<UL><LI><a href="#[20f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;programBinFile(const char*)
 </UL>
 
-<P><STRONG><a name="[21c]"></a>Indicator_programDone()</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, indicator.o(i._Z21Indicator_programDonev))
+<P><STRONG><a name="[21b]"></a>Indicator_programDone()</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, indicator.o(i._Z21Indicator_programDonev))
 <BR><BR>[Stack]<UL><LI>Max Depth = 320 + Unknown Stack Size
 <LI>Call Chain = Indicator_programDone() &rArr; gpio_write &rArr; mbed_assert_internal &rArr;  mbed_die (Cycle)
 </UL>
@@ -2865,7 +2863,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 </UL>
 
-<P><STRONG><a name="[21d]"></a>Indicator_programFail()</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, indicator.o(i._Z21Indicator_programFailv))
+<P><STRONG><a name="[21c]"></a>Indicator_programFail()</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, indicator.o(i._Z21Indicator_programFailv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 320 + Unknown Stack Size
 <LI>Call Chain = Indicator_programFail() &rArr; gpio_write &rArr; mbed_assert_internal &rArr;  mbed_die (Cycle)
 </UL>
@@ -2874,12 +2872,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 </UL>
 
-<P><STRONG><a name="[21e]"></a>Indicator_disconnected()</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, indicator.o(i._Z22Indicator_disconnectedv))
+<P><STRONG><a name="[21d]"></a>Indicator_disconnected()</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, indicator.o(i._Z22Indicator_disconnectedv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 320 + Unknown Stack Size
 <LI>Call Chain = Indicator_disconnected() &rArr; gpio_write &rArr; mbed_assert_internal &rArr;  mbed_die (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
-<LI><a href="#[217]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_read
+<BR>[Calls]<UL><LI><a href="#[217]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_read
 <LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
@@ -2926,7 +2923,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 432 + Unknown Stack Size
 <LI>Call Chain = FATDirHandle::readdir() &rArr; f_readdir &rArr; dir_read(FATFS_DIR*, int) &rArr; dir_next(FATFS_DIR*, int) &rArr; create_chain(FATFS*, unsigned long) &rArr; put_fat(FATFS*, unsigned long, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
+<BR>[Calls]<UL><LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> fatdirhandle.o(.constdata__ZTV12FATDirHandle)
 </UL>
@@ -2934,7 +2931,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 192 + Unknown Stack Size
 <LI>Call Chain = FATDirHandle::closedir() &rArr; f_closedir &rArr; validate(void*) &rArr; disk_status &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_closedir
+<BR>[Calls]<UL><LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_closedir
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> fatdirhandle.o(.constdata__ZTV12FATDirHandle)
 </UL>
@@ -2949,7 +2946,7 @@ Global Symbols
 <P><STRONG><a name="[d0]"></a>FATDirHandle::~FATDirHandle__deallocating()</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, fatdirhandle.o(i._ZN12FATDirHandleD0Ev))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = FATDirHandle::~FATDirHandle__deallocating() &rArr; operator delete (void*) &rArr; free &rArr; _free_internal
 </UL>
-<BR>[Calls]<UL><LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;operator delete (void*)
+<BR>[Calls]<UL><LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;operator delete (void*)
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> fatdirhandle.o(.constdata__ZTV12FATDirHandle)
 </UL>
@@ -2959,17 +2956,17 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::write(int)
-<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
+<LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> sdfilesystem.o(.constdata__ZTV12SDFileSystem)
 </UL>
-<P><STRONG><a name="[22c]"></a>SDFileSystem::_sd_sectors()</STRONG> (Thumb, 558 bytes, Stack size 56 bytes, sdfilesystem.o(i._ZN12SDFileSystem11_sd_sectorsEv))
+<P><STRONG><a name="[22b]"></a>SDFileSystem::_sd_sectors()</STRONG> (Thumb, 558 bytes, Stack size 56 bytes, sdfilesystem.o(i._ZN12SDFileSystem11_sd_sectorsEv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 776 + Unknown Stack Size
 <LI>Call Chain = SDFileSystem::_sd_sectors() &rArr; mbed::SPI::write(int) &rArr; spi_format &rArr; DSPI_MasterInit &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::write(int)
-<LI><a href="#[221]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<LI><a href="#[220]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 <LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__c89vfprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_initialize()
@@ -2985,48 +2982,48 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 816 + Unknown Stack Size
 <LI>Call Chain = SDFileSystem::disk_initialize() &rArr; SDFileSystem::initialise_card() &rArr; SDFileSystem::initialise_card_v2() &rArr; SDFileSystem::_cmd(int, int) &rArr; mbed::SPI::write(int) &rArr; spi_format &rArr; DSPI_MasterInit &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::frequency(int)
-<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
-<LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
-<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
-<LI><a href="#[221]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<BR>[Calls]<UL><LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::frequency(int)
+<LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
+<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
+<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
+<LI><a href="#[220]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 <LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__c89vfprintf
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> sdfilesystem.o(.constdata__ZTV12SDFileSystem)
 </UL>
-<P><STRONG><a name="[22d]"></a>SDFileSystem::initialise_card()</STRONG> (Thumb, 352 bytes, Stack size 32 bytes, sdfilesystem.o(i._ZN12SDFileSystem15initialise_cardEv))
+<P><STRONG><a name="[22c]"></a>SDFileSystem::initialise_card()</STRONG> (Thumb, 352 bytes, Stack size 32 bytes, sdfilesystem.o(i._ZN12SDFileSystem15initialise_cardEv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 800 + Unknown Stack Size
 <LI>Call Chain = SDFileSystem::initialise_card() &rArr; SDFileSystem::initialise_card_v2() &rArr; SDFileSystem::_cmd(int, int) &rArr; mbed::SPI::write(int) &rArr; spi_format &rArr; DSPI_MasterInit &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
-<LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::frequency(int)
+<LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::frequency(int)
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::write(int)
-<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
-<LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
+<LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
+<LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
 <LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__c89vfprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_initialize()
 </UL>
 
-<P><STRONG><a name="[230]"></a>SDFileSystem::initialise_card_v1()</STRONG> (Thumb, 66 bytes, Stack size 24 bytes, sdfilesystem.o(i._ZN12SDFileSystem18initialise_card_v1Ev), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
+<P><STRONG><a name="[22f]"></a>SDFileSystem::initialise_card_v1()</STRONG> (Thumb, 66 bytes, Stack size 24 bytes, sdfilesystem.o(i._ZN12SDFileSystem18initialise_card_v1Ev), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
 <LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__c89vfprintf
 </UL>
 
-<P><STRONG><a name="[22f]"></a>SDFileSystem::initialise_card_v2()</STRONG> (Thumb, 388 bytes, Stack size 24 bytes, sdfilesystem.o(i._ZN12SDFileSystem18initialise_card_v2Ev))
+<P><STRONG><a name="[22e]"></a>SDFileSystem::initialise_card_v2()</STRONG> (Thumb, 388 bytes, Stack size 24 bytes, sdfilesystem.o(i._ZN12SDFileSystem18initialise_card_v2Ev))
 <BR><BR>[Stack]<UL><LI>Max Depth = 768 + Unknown Stack Size
 <LI>Call Chain = SDFileSystem::initialise_card_v2() &rArr; SDFileSystem::_cmd(int, int) &rArr; mbed::SPI::write(int) &rArr; spi_format &rArr; DSPI_MasterInit &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
+<BR>[Calls]<UL><LI><a href="#[230]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
 <LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::write(int)
-<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
+<LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
 <LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__c89vfprintf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
+<BR>[Called By]<UL><LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
 </UL>
 
-<P><STRONG><a name="[22b]"></a>SDFileSystem::_cmd(int, int)</STRONG> (Thumb, 166 bytes, Stack size 24 bytes, sdfilesystem.o(i._ZN12SDFileSystem4_cmdEii))
+<P><STRONG><a name="[22a]"></a>SDFileSystem::_cmd(int, int)</STRONG> (Thumb, 166 bytes, Stack size 24 bytes, sdfilesystem.o(i._ZN12SDFileSystem4_cmdEii))
 <BR><BR>[Stack]<UL><LI>Max Depth = 744 + Unknown Stack Size
 <LI>Call Chain = SDFileSystem::_cmd(int, int) &rArr; mbed::SPI::write(int) &rArr; spi_format &rArr; DSPI_MasterInit &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
@@ -3034,9 +3031,9 @@ Global Symbols
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::write(int)
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_read(unsigned char*, unsigned, unsigned)
-<LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
-<LI><a href="#[230]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v1()
-<LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
+<LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
+<LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v1()
+<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
 <LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_initialize()
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_write(const unsigned char*, unsigned, unsigned)
 </UL>
@@ -3047,7 +3044,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::write(int)
-<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
+<LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> sdfilesystem.o(.constdata__ZTV12SDFileSystem)
 </UL>
@@ -3088,7 +3085,7 @@ Global Symbols
 <LI>Call Chain = FATFileHandle::read(void*, unsigned) &rArr; f_read &rArr; get_fat(FATFS*, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[236]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_read
-<LI><a href="#[222]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<LI><a href="#[221]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> fatfilehandle.o(.constdata__ZTV13FATFileHandle)
 </UL>
@@ -3105,7 +3102,7 @@ Global Symbols
 <LI>Call Chain = FATFileHandle::lseek(long, int) &rArr; f_lseek &rArr; create_chain(FATFS*, unsigned long) &rArr; put_fat(FATFS*, unsigned long, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[238]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_lseek
-<LI><a href="#[222]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<LI><a href="#[221]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> fatfilehandle.o(.constdata__ZTV13FATFileHandle)
 </UL>
@@ -3114,7 +3111,7 @@ Global Symbols
 <LI>Call Chain = FATFileHandle::write(const void*, unsigned) &rArr; f_write &rArr; create_chain(FATFS*, unsigned long) &rArr; put_fat(FATFS*, unsigned long, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[239]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_write
-<LI><a href="#[222]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<LI><a href="#[221]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> fatfilehandle.o(.constdata__ZTV13FATFileHandle)
 </UL>
@@ -3135,7 +3132,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = FATFileHandle::~FATFileHandle__deallocating() &rArr; operator delete (void*) &rArr; free &rArr; _free_internal
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::FileHandle::~FileHandle__sub_object()
-<LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;operator delete (void*)
+<LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;operator delete (void*)
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> fatfilehandle.o(.constdata__ZTV13FATFileHandle)
 </UL>
@@ -3149,7 +3146,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 1688 + Unknown Stack Size
 <LI>Call Chain = FATFileSystem::open(const char*, int) &rArr; f_open &rArr; dir_register(FATFS_DIR*) &rArr; dir_find(FATFS_DIR*) &rArr; dir_next(FATFS_DIR*, int) &rArr; create_chain(FATFS*, unsigned long) &rArr; put_fat(FATFS*, unsigned long, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[223]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<BR>[Calls]<UL><LI><a href="#[222]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 <LI><a href="#[238]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_lseek
 <LI><a href="#[23a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FATFileHandle::FATFileHandle(FIL)
 <LI><a href="#[23c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_open
@@ -3179,7 +3176,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 400 + Unknown Stack Size
 <LI>Call Chain = FATFileSystem::FATFileSystem__sub_object(const char*) &rArr; error &rArr; exit &rArr;  fflush (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[223]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<BR>[Calls]<UL><LI><a href="#[222]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 <LI><a href="#[242]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_mount
 <LI><a href="#[241]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;error
 <LI><a href="#[23b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::FileBase::getName()
@@ -3269,7 +3266,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[249]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;serial_readable
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_getResp(char*, unsigned)
-<LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
+<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
 </UL>
 
 <P><STRONG><a name="[24a]"></a>mbed::SerialBase::SerialBase(PinName, PinName)</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, SerialBase.o(i._ZN4mbed10SerialBaseC1E7PinNameS1_))
@@ -3343,7 +3340,7 @@ Global Symbols
 <P><STRONG><a name="[ed]"></a>mbed::BaseDirHandle::~BaseDirHandle__deallocating()</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, FileSystemLike.o(i._ZN4mbed13BaseDirHandleD0Ev))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = mbed::BaseDirHandle::~BaseDirHandle__deallocating() &rArr; operator delete (void*) &rArr; free &rArr; _free_internal
 </UL>
-<BR>[Calls]<UL><LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;operator delete (void*)
+<BR>[Calls]<UL><LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;operator delete (void*)
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> FileSystemLike.o(.constdata__ZTVN4mbed13BaseDirHandleE)
 </UL>
@@ -3396,10 +3393,10 @@ Global Symbols
 <LI><a href="#[259]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_format
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_read(unsigned char*, unsigned, unsigned)
-<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
-<LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
-<LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
-<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
+<LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
+<LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
+<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
+<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_write(const unsigned char*, unsigned, unsigned)
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> SPI.o(.constdata__ZTVN4mbed3SPIE)
@@ -3407,14 +3404,14 @@ Global Symbols
 <P><STRONG><a name="[f4]"></a>mbed::SPI::unlock()</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, SPI.o(i._ZN4mbed3SPI6unlockEv))
 <BR>[Address Reference Count : 1]<UL><LI> SPI.o(.constdata__ZTVN4mbed3SPIE)
 </UL>
-<P><STRONG><a name="[22e]"></a>mbed::SPI::frequency(int)</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, SPI.o(i._ZN4mbed3SPI9frequencyEi))
+<P><STRONG><a name="[22d]"></a>mbed::SPI::frequency(int)</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, SPI.o(i._ZN4mbed3SPI9frequencyEi))
 <BR><BR>[Stack]<UL><LI>Max Depth = 720 + Unknown Stack Size
 <LI>Call Chain = mbed::SPI::frequency(int) &rArr; spi_format &rArr; DSPI_MasterInit &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[25a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_frequency
 <LI><a href="#[259]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_format
 </UL>
-<BR>[Called By]<UL><LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
+<BR>[Called By]<UL><LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
 <LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_initialize()
 </UL>
 
@@ -3472,7 +3469,7 @@ Global Symbols
 <LI><a href="#[17d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fflush
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_getResp(char*, unsigned)
-<LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
+<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
 </UL>
 
 <P><STRONG><a name="[212]"></a>mbed::Stream::putc(int)</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, Stream.o(i._ZN4mbed6Stream4putcEi))
@@ -3482,7 +3479,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fputc
 <LI><a href="#[17d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fflush
 </UL>
-<BR>[Called By]<UL><LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
+<BR>[Called By]<UL><LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
 <LI><a href="#[20f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;programBinFile(const char*)
 </UL>
 
@@ -3493,9 +3490,9 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[17d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fflush
 <LI><a href="#[1bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fputs
 </UL>
-<BR>[Called By]<UL><LI><a href="#[21a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
+<BR>[Called By]<UL><LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
 <LI><a href="#[211]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_erase(unsigned char, unsigned char)
-<LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
+<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
 <LI><a href="#[214]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_copyToFlash(unsigned, unsigned, unsigned short)
 <LI><a href="#[20d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_readMemory(unsigned, unsigned, char*)
 <LI><a href="#[20c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_WriteToRAM(unsigned, unsigned, const char*)
@@ -3725,7 +3722,7 @@ Global Symbols
 <P><STRONG><a name="[fe]"></a>thunk{-44} to mbed::Serial::unlock()</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, Serial.o(i._ZThn44_N4mbed6Serial6unlockEv))
 <BR>[Address Reference Count : 1]<UL><LI> Serial.o(.constdata__ZTVN4mbed6SerialE)
 </UL>
-<P><STRONG><a name="[22a]"></a>operator delete (void*)</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, delete.o(i._ZdlPv))
+<P><STRONG><a name="[229]"></a>operator delete (void*)</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, delete.o(i._ZdlPv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = operator delete (void*) &rArr; free &rArr; _free_internal
 </UL>
 <BR>[Calls]<UL><LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
@@ -3944,30 +3941,30 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
 <LI>Call Chain = disk_initialize &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<BR>[Calls]<UL><LI><a href="#[223]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_volume(FATFS**, const char**, unsigned char)
 </UL>
 
-<P><STRONG><a name="[220]"></a>disk_ioctl</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, diskio.o(i.disk_ioctl))
+<P><STRONG><a name="[21f]"></a>disk_ioctl</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, diskio.o(i.disk_ioctl))
 <BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
 <LI>Call Chain = disk_ioctl &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<BR>[Calls]<UL><LI><a href="#[223]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 </UL>
-<BR>[Called By]<UL><LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
+<BR>[Called By]<UL><LI><a href="#[21e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
 </UL>
 
 <P><STRONG><a name="[1fb]"></a>disk_read</STRONG> (Thumb, 48 bytes, Stack size 24 bytes, diskio.o(i.disk_read))
 <BR><BR>[Stack]<UL><LI>Max Depth = 176 + Unknown Stack Size
 <LI>Call Chain = disk_read &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<BR>[Calls]<UL><LI><a href="#[223]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 </UL>
 <BR>[Called By]<UL><LI><a href="#[239]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_write
 <LI><a href="#[236]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_read
 <LI><a href="#[238]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_lseek
-<LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_read(FATFS_DIR*, int)
+<LI><a href="#[225]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_read(FATFS_DIR*, int)
 <LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_find(FATFS_DIR*)
 <LI><a href="#[201]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_register(FATFS_DIR*)
 <LI><a href="#[1f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;move_window(FATFS*, unsigned long)
@@ -3977,9 +3974,9 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
 <LI>Call Chain = disk_status &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<BR>[Calls]<UL><LI><a href="#[223]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 </UL>
-<BR>[Called By]<UL><LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
+<BR>[Called By]<UL><LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
 <LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_volume(FATFS**, const char**, unsigned char)
 </UL>
 
@@ -3987,14 +3984,14 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 176 + Unknown Stack Size
 <LI>Call Chain = disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
+<BR>[Calls]<UL><LI><a href="#[223]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_if(int, const char*, ...)
 </UL>
 <BR>[Called By]<UL><LI><a href="#[239]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_write
 <LI><a href="#[277]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
 <LI><a href="#[236]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_read
 <LI><a href="#[238]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_lseek
 <LI><a href="#[203]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_next(FATFS_DIR*, int)
-<LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
+<LI><a href="#[21e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
 <LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_window(FATFS*)
 </UL>
 
@@ -4030,16 +4027,16 @@ Global Symbols
 <LI>Call Chain = f_close &rArr; f_sync &rArr; sync_fs(FATFS*) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[277]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
-<LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
+<LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
 </UL>
 <BR>[Called By]<UL><LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FATFileHandle::close()
 </UL>
 
-<P><STRONG><a name="[229]"></a>f_closedir</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, ff.o(i.f_closedir))
+<P><STRONG><a name="[228]"></a>f_closedir</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, ff.o(i.f_closedir))
 <BR><BR>[Stack]<UL><LI>Max Depth = 176 + Unknown Stack Size
 <LI>Call Chain = f_closedir &rArr; validate(void*) &rArr; disk_status &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
+<BR>[Calls]<UL><LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FATDirHandle::closedir()
 </UL>
@@ -4049,7 +4046,7 @@ Global Symbols
 <LI>Call Chain = f_lseek &rArr; create_chain(FATFS*, unsigned long) &rArr; put_fat(FATFS*, unsigned long, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_fat(FATFS*, unsigned long)
-<LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
+<LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
 <LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_chain(FATFS*, unsigned long)
 <LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_write
 <LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_read
@@ -4098,7 +4095,7 @@ Global Symbols
 <LI>Call Chain = f_read &rArr; get_fat(FATFS*, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_fat(FATFS*, unsigned long)
-<LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
+<LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
 <LI><a href="#[202]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mem_cpy(void*, const void*, unsigned)
 <LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_write
 <LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_read
@@ -4106,12 +4103,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FATFileHandle::read(void*, unsigned)
 </UL>
 
-<P><STRONG><a name="[228]"></a>f_readdir</STRONG> (Thumb, 92 bytes, Stack size 32 bytes, ff.o(i.f_readdir))
+<P><STRONG><a name="[227]"></a>f_readdir</STRONG> (Thumb, 92 bytes, Stack size 32 bytes, ff.o(i.f_readdir))
 <BR><BR>[Stack]<UL><LI>Max Depth = 392 + Unknown Stack Size
 <LI>Call Chain = f_readdir &rArr; dir_read(FATFS_DIR*, int) &rArr; dir_next(FATFS_DIR*, int) &rArr; create_chain(FATFS*, unsigned long) &rArr; put_fat(FATFS*, unsigned long, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
-<LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_read(FATFS_DIR*, int)
+<BR>[Calls]<UL><LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
+<LI><a href="#[225]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_read(FATFS_DIR*, int)
 <LI><a href="#[203]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_next(FATFS_DIR*, int)
 <LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_sdi(FATFS_DIR*, unsigned)
 <LI><a href="#[204]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_fileinfo(FATFS_DIR*, FILINFO*)
@@ -4123,8 +4120,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 232 + Unknown Stack Size
 <LI>Call Chain = f_sync &rArr; sync_fs(FATFS*) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
-<LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
+<BR>[Calls]<UL><LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
+<LI><a href="#[21e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
 <LI><a href="#[1f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;move_window(FATFS*, unsigned long)
 <LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_write
 <LI><a href="#[278]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_fattime
@@ -4138,7 +4135,7 @@ Global Symbols
 <LI>Call Chain = f_write &rArr; create_chain(FATFS*, unsigned long) &rArr; put_fat(FATFS*, unsigned long, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[277]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
-<LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
+<LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate(void*)
 <LI><a href="#[202]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mem_cpy(void*, const void*, unsigned)
 <LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_chain(FATFS*, unsigned long)
 <LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_write
@@ -4152,7 +4149,7 @@ Global Symbols
 <LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;follow_path(FATFS_DIR*, const char*)
 </UL>
 
-<P><STRONG><a name="[225]"></a>ff_wtoupper</STRONG> (Thumb, 82 bytes, Stack size 8 bytes, ccsbcs.o(i.ff_wtoupper))
+<P><STRONG><a name="[224]"></a>ff_wtoupper</STRONG> (Thumb, 82 bytes, Stack size 8 bytes, ccsbcs.o(i.ff_wtoupper))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = ff_wtoupper
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_find(FATFS_DIR*)
@@ -4303,7 +4300,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[273]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed_assert_internal
 </UL>
-<BR>[Called By]<UL><LI><a href="#[21e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_disconnected()
+<BR>[Called By]<UL><LI><a href="#[21d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_disconnected()
 <LI><a href="#[213]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programing()
 <LI><a href="#[215]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_noBin()
 </UL>
@@ -4316,17 +4313,17 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[234]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_init_out
 <LI><a href="#[231]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::SDFileSystem(PinName, PinName, PinName, PinName, const char*)
-<LI><a href="#[21e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_disconnected()
-<LI><a href="#[21d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programFail()
-<LI><a href="#[21c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programDone()
+<LI><a href="#[21d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_disconnected()
+<LI><a href="#[21c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programFail()
+<LI><a href="#[21b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programDone()
 <LI><a href="#[213]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programing()
-<LI><a href="#[21b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_connected()
+<LI><a href="#[21a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_connected()
 <LI><a href="#[215]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_noBin()
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_read(unsigned char*, unsigned, unsigned)
-<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
-<LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
-<LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
-<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
+<LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_cmd(int, int)
+<LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
+<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card()
+<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_write(const unsigned char*, unsigned, unsigned)
 <LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 <LI><a href="#[276]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed_die
@@ -4342,11 +4339,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sysTimerTick
 </UL>
 
-<P><STRONG><a name="[1cf]"></a>$Super$$main</STRONG> (Thumb, 426 bytes, Stack size 24 bytes, main.o(i.main))
+<P><STRONG><a name="[1cf]"></a>$Super$$main</STRONG> (Thumb, 458 bytes, Stack size 24 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 824 + Unknown Stack Size
 <LI>Call Chain = $Super$$main &rArr; programBinFile(const char*) &rArr; ISP_WriteToRAM(unsigned, unsigned, const char*) &rArr; ISP_getResp(char*, unsigned) &rArr; wait_us &rArr; us_ticker_read &rArr; us_ticker_init &rArr; CLOCK_GetFreq &rArr; CLOCK_GetOutClkFreq &rArr; CLOCK_GetPll0Freq &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[284]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait
+<BR>[Calls]<UL><LI><a href="#[230]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
+<LI><a href="#[284]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait
 <LI><a href="#[208]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;readdir
 <LI><a href="#[207]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;opendir
 <LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
@@ -4354,11 +4352,11 @@ Global Symbols
 <LI><a href="#[210]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::Stream::printf(const char*, ...)
 <LI><a href="#[24e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::InterruptIn::rise(mbed::Callback&lang;void()&rang;)
 <LI><a href="#[247]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SerialBase::baud(int)
-<LI><a href="#[21e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_disconnected()
-<LI><a href="#[21d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programFail()
-<LI><a href="#[21c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programDone()
-<LI><a href="#[21b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_connected()
-<LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
+<LI><a href="#[21d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_disconnected()
+<LI><a href="#[21c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programFail()
+<LI><a href="#[21b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programDone()
+<LI><a href="#[21a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_connected()
+<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
 <LI><a href="#[215]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_noBin()
 <LI><a href="#[20f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;programBinFile(const char*)
 <LI><a href="#[209]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strcmp
@@ -4390,9 +4388,10 @@ Global Symbols
 
 <P><STRONG><a name="[276]"></a>mbed_die</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, board.o(i.mbed_die))
 <BR><BR>[Stack]<UL><LI>Max Depth = 360 + Unknown Stack Size
-<LI>Call Chain = mbed_die &rArr; gpio_init_out &rArr; gpio_init &rArr; pin_function &rArr; mbed_assert_internal &rArr;  mbed_die (Cycle)
+ + In Cycle
+<LI>Call Chain = mbed_die &rArr;  wait_ms (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
+<BR>[Calls]<UL><LI><a href="#[230]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
 <LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_write
 <LI><a href="#[234]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_init_out
 <LI><a href="#[24f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;core_util_critical_section_enter
@@ -5074,7 +5073,7 @@ Global Symbols
 <LI><a href="#[2b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DSPI_MasterGetDefaultConfig
 </UL>
 <BR>[Called By]<UL><LI><a href="#[233]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::SPI(PinName, PinName, PinName, PinName)
-<LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::frequency(int)
+<LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::frequency(int)
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::write(int)
 </UL>
 
@@ -5087,7 +5086,7 @@ Global Symbols
 <LI><a href="#[2b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DSPI_MasterSetBaudRate
 </UL>
 <BR>[Called By]<UL><LI><a href="#[233]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::SPI(PinName, PinName, PinName, PinName)
-<LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::frequency(int)
+<LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::frequency(int)
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SPI::write(int)
 </UL>
 
@@ -5252,7 +5251,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;us_ticker_init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_us
-<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
+<LI><a href="#[230]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait_ms
 <LI><a href="#[284]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;wait
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> us_ticker_api.o(.constdata)
@@ -5274,16 +5273,14 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 </UL>
 
-<P><STRONG><a name="[218]"></a>wait_ms</STRONG> (Thumb, 28 bytes, Stack size 16 bytes, wait_api.o(i.wait_ms))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16 + In Cycle
-<LI>Call Chain = wait_ms &rArr;  us_ticker_read (Cycle)
+<P><STRONG><a name="[230]"></a>wait_ms</STRONG> (Thumb, 28 bytes, Stack size 16 bytes, wait_api.o(i.wait_ms))
+<BR><BR>[Stack]<UL><LI>Max Depth = 624 + Unknown Stack Size
+<LI>Call Chain = wait_ms &rArr; us_ticker_read &rArr; us_ticker_init &rArr; CLOCK_GetFreq &rArr; CLOCK_GetOutClkFreq &rArr; CLOCK_GetPll0Freq &rArr; __aeabi_assert &rArr; __assert_puts &rArr; fflush &rArr; _do_fflush &rArr; _fflush &rArr; _writebuf &rArr; _sys_write &rArr; serial_init &rArr;  CLOCK_GetFreq (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;us_ticker_read
 </UL>
-<BR>[Called By]<UL><LI><a href="#[21e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_disconnected()
-<LI><a href="#[213]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_programing()
-<LI><a href="#[215]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Indicator_noBin()
-<LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
+<BR>[Called By]<UL><LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::initialise_card_v2()
+<LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 <LI><a href="#[276]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed_die
 </UL>
 
@@ -5294,7 +5291,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;us_ticker_read
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_getResp(char*, unsigned)
-<LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
+<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_syncBaudRate()
 </UL>
 
 <P><STRONG><a name="[a3]"></a>_get_lc_ctype</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, lc_ctype_c.o(locale$$code))
@@ -5366,7 +5363,7 @@ Local Symbols
 <LI><a href="#[1ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::Stream::getc()
 <LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mbed::SerialBase::readable()
 </UL>
-<BR>[Called By]<UL><LI><a href="#[21a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
+<BR>[Called By]<UL><LI><a href="#[219]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_prepareSectors(unsigned char, unsigned char)
 <LI><a href="#[211]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_erase(unsigned char, unsigned char)
 <LI><a href="#[214]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_copyToFlash(unsigned, unsigned, unsigned short)
 <LI><a href="#[20d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ISP_readMemory(unsigned, unsigned, char*)
@@ -5382,17 +5379,17 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> ethernetinterface.o(.init_array)
 </UL>
-<P><STRONG><a name="[221]"></a>debug_if(int, const char*, ...)</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, sdfilesystem.o(i._Z8debug_ifiPKcz))
+<P><STRONG><a name="[220]"></a>debug_if(int, const char*, ...)</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, sdfilesystem.o(i._Z8debug_ifiPKcz))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
 <LI>Call Chain = debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__c89vfprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::disk_initialize()
-<LI><a href="#[22c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
+<LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDFileSystem::_sd_sectors()
 </UL>
 
-<P><STRONG><a name="[222]"></a>debug_if(int, const char*, ...)</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, fatfilehandle.o(i._Z8debug_ifiPKcz))
+<P><STRONG><a name="[221]"></a>debug_if(int, const char*, ...)</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, fatfilehandle.o(i._Z8debug_ifiPKcz))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
 <LI>Call Chain = debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -5403,7 +5400,7 @@ Local Symbols
 <LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FATFileHandle::read(void*, unsigned)
 </UL>
 
-<P><STRONG><a name="[223]"></a>debug_if(int, const char*, ...)</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, fatfilesystem.o(i._Z8debug_ifiPKcz))
+<P><STRONG><a name="[222]"></a>debug_if(int, const char*, ...)</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, fatfilesystem.o(i._Z8debug_ifiPKcz))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
 <LI>Call Chain = debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -5413,7 +5410,7 @@ Local Symbols
 <LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FATFileSystem::open(const char*, int)
 </UL>
 
-<P><STRONG><a name="[224]"></a>debug_if(int, const char*, ...)</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, diskio.o(i._Z8debug_ifiPKcz))
+<P><STRONG><a name="[223]"></a>debug_if(int, const char*, ...)</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, diskio.o(i._Z8debug_ifiPKcz))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
 <LI>Call Chain = debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -5422,7 +5419,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_write
 <LI><a href="#[1f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_status
 <LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_read
-<LI><a href="#[220]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_ioctl
+<LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_ioctl
 <LI><a href="#[1f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_initialize
 </UL>
 
@@ -5473,10 +5470,10 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_write
 </UL>
-<BR>[Called By]<UL><LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_read(FATFS_DIR*, int)
+<BR>[Called By]<UL><LI><a href="#[225]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_read(FATFS_DIR*, int)
 <LI><a href="#[203]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_next(FATFS_DIR*, int)
 <LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_find(FATFS_DIR*)
-<LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
+<LI><a href="#[21e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
 <LI><a href="#[201]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_register(FATFS_DIR*)
 <LI><a href="#[1f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;move_window(FATFS*, unsigned long)
 </UL>
@@ -5514,7 +5511,7 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ff_convert
 </UL>
-<BR>[Called By]<UL><LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
+<BR>[Called By]<UL><LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
 </UL>
 
 <P><STRONG><a name="[205]"></a>remove_chain(FATFS*, unsigned long)</STRONG> (Thumb, 102 bytes, Stack size 24 bytes, ff.o(i._Z12remove_chainP5FATFSm))
@@ -5533,7 +5530,7 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_fat(FATFS*, unsigned long)
 </UL>
-<BR>[Called By]<UL><LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
+<BR>[Called By]<UL><LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
 <LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_find(FATFS_DIR*)
 <LI><a href="#[201]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_register(FATFS_DIR*)
 <LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;follow_path(FATFS_DIR*, const char*)
@@ -5548,19 +5545,19 @@ Local Symbols
 
 <P><STRONG><a name="[1f8]"></a>mem_set(void*, int, unsigned)</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, ff.o(i._Z7mem_setPvij))
 <BR><BR>[Called By]<UL><LI><a href="#[203]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_next(FATFS_DIR*, int)
-<LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
+<LI><a href="#[21e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs(FATFS*)
 <LI><a href="#[201]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_register(FATFS_DIR*)
 <LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;follow_path(FATFS_DIR*, const char*)
 </UL>
 
-<P><STRONG><a name="[21f]"></a>sync_fs(FATFS*)</STRONG> (Thumb, 182 bytes, Stack size 16 bytes, ff.o(i._Z7sync_fsP5FATFS))
+<P><STRONG><a name="[21e]"></a>sync_fs(FATFS*)</STRONG> (Thumb, 182 bytes, Stack size 16 bytes, ff.o(i._Z7sync_fsP5FATFS))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216 + Unknown Stack Size
 <LI>Call Chain = sync_fs(FATFS*) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mem_set(void*, int, unsigned)
 <LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_window(FATFS*)
 <LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_write
-<LI><a href="#[220]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_ioctl
+<LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_ioctl
 </UL>
 <BR>[Called By]<UL><LI><a href="#[277]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
 </UL>
@@ -5573,7 +5570,7 @@ Local Symbols
 <LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_sdi(FATFS_DIR*, unsigned)
 <LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_window(FATFS*)
 <LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_read
-<LI><a href="#[225]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ff_wtoupper
+<LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ff_wtoupper
 </UL>
 <BR>[Called By]<UL><LI><a href="#[201]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_register(FATFS_DIR*)
 <LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;follow_path(FATFS_DIR*, const char*)
@@ -5589,13 +5586,13 @@ Local Symbols
 <LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_window(FATFS*)
 <LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_write
 </UL>
-<BR>[Called By]<UL><LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
-<LI><a href="#[226]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_read(FATFS_DIR*, int)
+<BR>[Called By]<UL><LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
+<LI><a href="#[225]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_read(FATFS_DIR*, int)
 <LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_find(FATFS_DIR*)
 <LI><a href="#[201]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_register(FATFS_DIR*)
 </UL>
 
-<P><STRONG><a name="[226]"></a>dir_read(FATFS_DIR*, int)</STRONG> (Thumb, 374 bytes, Stack size 48 bytes, ff.o(i._Z8dir_readP9FATFS_DIRi))
+<P><STRONG><a name="[225]"></a>dir_read(FATFS_DIR*, int)</STRONG> (Thumb, 374 bytes, Stack size 48 bytes, ff.o(i._Z8dir_readP9FATFS_DIRi))
 <BR><BR>[Stack]<UL><LI>Max Depth = 360 + Unknown Stack Size
 <LI>Call Chain = dir_read(FATFS_DIR*, int) &rArr; dir_next(FATFS_DIR*, int) &rArr; create_chain(FATFS*, unsigned long) &rArr; put_fat(FATFS*, unsigned long, unsigned long) &rArr; move_window(FATFS*, unsigned long) &rArr; sync_window(FATFS*) &rArr; disk_write &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -5603,10 +5600,10 @@ Local Symbols
 <LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_window(FATFS*)
 <LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_read
 </UL>
-<BR>[Called By]<UL><LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
+<BR>[Called By]<UL><LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
 </UL>
 
-<P><STRONG><a name="[227]"></a>validate(void*)</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, ff.o(i._Z8validatePv))
+<P><STRONG><a name="[226]"></a>validate(void*)</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, ff.o(i._Z8validatePv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
 <LI>Call Chain = validate(void*) &rArr; disk_status &rArr; debug_if(int, const char*, ...) &rArr; __c89vfprintf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -5617,8 +5614,8 @@ Local Symbols
 <LI><a href="#[236]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_read
 <LI><a href="#[238]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_lseek
 <LI><a href="#[237]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_close
-<LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
-<LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_closedir
+<LI><a href="#[227]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
+<LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_closedir
 </UL>
 
 <P><STRONG><a name="[2b5]"></a>rt_ms2tick</STRONG> (Thumb, 64 bytes, Stack size 0 bytes, rt_cmsis.o(i.rt_ms2tick))

@@ -27,7 +27,6 @@ void Indicator_noBin(void)
 	BLUE_LED_OFF;
 	GREEN_LED_OFF;
 	RED_LED_TOGGLE;
-	wait_ms(200);
 }
 
 void Indicator_disconnected(void)
@@ -35,7 +34,6 @@ void Indicator_disconnected(void)
 	GREEN_LED_OFF;
 	RED_LED_OFF;
 	BLUE_LED_TOGGLE;
-	wait_ms(200);
 }
 
 void Indicator_connected(void)
@@ -50,7 +48,6 @@ void Indicator_programing(void)
 	BLUE_LED_OFF;
 	RED_LED_OFF;
 	GREEN_LED_TOGGLE;
-	wait_ms(20);
 }
 
 void Indicator_programDone(void)

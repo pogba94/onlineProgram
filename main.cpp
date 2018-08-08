@@ -1,4 +1,3 @@
-#include "mbed.h"
 #include "UserConfig.h"
 #include "program.h"
 #include "cJSON.h"
@@ -9,6 +8,7 @@
 #if ENABLE_LCD12832
 	#include "C12832.h"
 #endif
+#include "mbed.h"
 
 /* Macro Definition */
 #define  FW_DESCRIPTION           "Online Program\r\nVersion:%s\r\nTarget platform:%s\r\n"
@@ -127,7 +127,7 @@ int programBinFile(const char *path)
 	ISP_unlock();
 	ret = ISP_erase(0,SECTOR_NUM-1);
 	if(ret != RET_CODE_SUCCESS){
-		pc.printf("Erase sectors failed!\r\n");
+		pc.printf("Erase sectors failed!ret=%d\r\n",ret);
 		return -4;
 	}
 	pc.printf("Erase sectors successfully!\r\n");
@@ -372,8 +372,10 @@ int main()
 			case DEV_STATUS_PROGRAMING:
 				pc.printf("bin:%s\r\n",binFilePath);
 				if(!programBinFile(binFilePath)){
+					pc.printf("program successfully!\r\n");
 					devStatus = DEV_STATUS_PROGRAM_SUCCESS;
 				}else{
+					pc.printf("program failed!\r\n");
 					devStatus = DEV_STATUS_PROGRAM_FAIL;
 				}
 				break;
@@ -394,5 +396,6 @@ int main()
 			default:
 				break;
 		}
+		wait_ms(500);
 	}
 }
