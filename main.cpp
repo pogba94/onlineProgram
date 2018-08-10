@@ -5,6 +5,7 @@
 #include "UUencode.h"
 #include "SDFileSystem.h"
 #include "indicator.h"
+#include "network.h"
 #if ENABLE_LCD12832
 	#include "C12832.h"
 #endif
@@ -19,6 +20,12 @@
 
 #define  DEBUG_UART_BAUD_RATE     (115200)
 #define  ISP_UART_BAUD_RATE       (115200)
+#define  CFG_FILE_SIZE_LIMIT      (1024)
+
+typedef enum MODE{
+	MODE_PROGRAM_CODE =0,
+	MODE_PROGRAM_UID,
+}MODE_T;
 
 typedef enum DEV_STATUS{
 	DEV_STATUS_BIN_NOT_FOUND=0,
@@ -45,15 +52,21 @@ DigitalOut green(LED_GREEN);
 DigitalOut red(LED_RED);
 InterruptIn sw2(SW2);
 SDFileSystem sd(PTE3, PTE1, PTE2, PTE4, "sd"); // MOSI, MISO, SCK, CS
-FILE *fp;
-volatile int devStatus = DEV_STATUS_BIN_NOT_FOUND;
-volatile EVENT_FLAGS_T eventFlags = {false,false,false,false};
-
-char buffer[512];
-char binFilePath[36];
 #if ENABLE_LCD12832
 	C12832 lcd(D11,D13,D12,D7,D10);
 #endif
+FILE *fp;
+volatile int devStatus = DEV_STATUS_BIN_NOT_FOUND;
+volatile EVENT_FLAGS_T eventFlags = {false,false,false,false};
+ISP_CONFIG_T ISPcfg;
+MODE_T mode;
+extern TCPSocketConnection tcpSock;
+char buffer[512];
+char binFilePath[36];
+char cfgFilePath[36];
+const char customerCode[32] = "orange20180810";
+char uid[36];
+
 /*sw2 irq handler */
 void sw2_release()
 {
@@ -72,9 +85,9 @@ void ledInit(void)
 	blue = 1;
 }
 
-int detectBinFile(const char *dir,char *path)
+int detectFile(const char *dir,const char* file_type,char *path)
 {
-	if(dir == NULL && path == NULL)
+	if(dir == NULL || path == NULL || file_type == NULL)
 		return -1;
 	DIR *d = opendir(dir);
 	if(d == NULL)
@@ -82,7 +95,7 @@ int detectBinFile(const char *dir,char *path)
 	struct dirent *fp;
 	char *p;
 	while((fp = readdir(d)) != NULL){
-		p = strstr(fp->d_name,".bin");
+		p = strstr(fp->d_name,file_type);
 		if(p != NULL){
 			if(strcmp(path,fp->d_name)){
 				path[0] = '\0';
@@ -222,6 +235,7 @@ int programBinFile(const char *path)
 		}
 	}
 	pc.printf("verify OK!\r\n");
+	fclose(fp);
 	return 0;
 	/* free memory here */
 	Exit:
@@ -229,6 +243,7 @@ int programBinFile(const char *path)
 		free(buffer);
 		free(checksumR);
 		free(checksumW);
+		fclose(fp);
 		return ret;
 	}
 }
@@ -282,6 +297,102 @@ int programUID(uint32_t addr,const char id[],uint8_t size)
 	return 0;
 }
 
+int strFlit(const char* in,char *out)
+{	
+	if(in == NULL || out == NULL)
+		return -1;
+	int pIn = 0,pOut = 0;
+	while(*(in+pIn++) != '{'){}
+	pIn--;
+	while(*(in+pIn) != '\0'){
+		if(*(in+pIn)>32 && *(in+pIn)<126){
+			*(out+pOut) = *(in+pIn);
+			pOut++;
+		}
+		pIn++;
+	}
+	out[pOut] = '\0';
+	return 0;
+}
+
+
+int getConfig(const char* path,ISP_CONFIG_T* config)
+{
+	if(path == NULL || config == NULL)
+		return -1;
+	fp = fopen(path,"rt");
+	if(fp == NULL){
+		pc.printf("cannot open file\r\n");
+		return -2;
+	}
+	fseek(fp,0,SEEK_END);
+	int size = ftell(fp);
+	pc.printf("size of config file:%d bytes\r\n",size);
+	if(size > CFG_FILE_SIZE_LIMIT){
+		pc.printf("config file is too large,no more than %d bytes\r\n",CFG_FILE_SIZE_LIMIT);
+		fclose(fp);
+		return -3;
+	}
+	char *txt = (char*)malloc(CFG_FILE_SIZE_LIMIT+1);
+	if(txt == NULL){
+		fclose(fp);
+		return -4;
+	}
+	char *txtFlit = (char*)malloc(CFG_FILE_SIZE_LIMIT+1);
+	if(txtFlit == NULL){
+		fclose(fp);
+		return -4;
+	}
+	int ret;
+	rewind(fp);
+	fread(txt,sizeof(char),size,fp);
+	txt[size] = '\0';
+	pc.printf("txt:%s\r\n",txt);
+	strFlit(txt,txtFlit);
+	pc.printf("txt filter:%s\r\n",txtFlit);
+	cJSON *json = cJSON_Parse(txt);
+	if(!json){
+		pc.printf("no json string!\r\n");
+		ret = -5;
+		goto Exit;
+	}
+	if(cJSON_GetObjectItem(json,"platform") == NULL ||
+			cJSON_GetObjectItem(json,"map") == NULL ||
+			cJSON_GetObjectItem(json,"ISP_setting") == NULL){
+				pc.printf("lack of item\r\nplatform:%d,map:%d,isp_setting:%d\r\n",
+				cJSON_GetObjectItem(json,"platform"),
+				cJSON_GetObjectItem(json,"map"),
+				cJSON_GetObjectItem(json,"ISP_setting")
+				);
+		ret = -6;
+		goto Exit;
+	}
+	sprintf(config->tragetIC,"%s",cJSON_GetObjectItem(json,"platfrom")->valuestring);
+	pc.printf("platform:%s\r\n",config->tragetIC);
+  cJSON *ISP_seting = cJSON_GetObjectItem(json,"ISP_setting");
+  cJSON *memory_map = cJSON_GetObjectItem(json,"map");
+  sprintf(config->baudrate,"%s",cJSON_GetObjectItem(ISP_seting,"baudrate")->valuestring);
+	pc.printf("baudrate:%d\r\n",config->baudrate);
+  pc.printf("check item pass\r\n");	
+	return 0;
+	Exit:
+	{
+		fclose(fp);
+		free(txt);
+		return ret;
+	}
+}
+
+void test(void)
+{
+	if(!detectFile(SD_DISK_NAME,".json",cfgFilePath)){
+		pc.printf("found configure file:%s\r\n",cfgFilePath);
+		getConfig(cfgFilePath,&ISPcfg);
+	}else{
+		pc.printf("cannot found configure file\r\n");
+	}
+}
+
 int main()
 {
 	ledInit();
@@ -324,9 +435,11 @@ int main()
 		pc.printf("cannot detect bin file in sd card!please check!\r\n");
 	}
 	*/
+//	test();
+//	while(1){}
 	while(1){
 		/* detect if bin file exsit */
-		if(!detectBinFile(SD_DISK_NAME,binFilePath)){
+		if(!detectFile(SD_DISK_NAME,".bin",binFilePath)){
 			eventFlags.binFileExsitFlag = true;
 		}else{
 			eventFlags.binFileExsitFlag = false;

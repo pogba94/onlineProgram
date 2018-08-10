@@ -404,6 +404,16 @@
               <FileType>5</FileType>
               <FilePath>.\indicator.h</FilePath>
             </File>
+            <File>
+              <FileName>network.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\network.h</FilePath>
+            </File>
+            <File>
+              <FileName>network.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\network.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

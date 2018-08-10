@@ -66,6 +66,16 @@ typedef enum RET_CODE
 	RET_CODE_WRITE_FAIL = -5
 }RET_CODE_T;
 
+typedef struct ISP_CONFIG{
+	char baudrate[8];
+	char tragetIC[32];
+	int flashStartAddress;
+	int sectorSize;
+	int sectorNum;
+	int RAMStartAddress;
+	int RAMSize;
+}ISP_CONFIG_T;
+
 /* check if address of flash or ram is illegal */
 #define  CHECK_RAM_ADDR(x)        				(x>=RAM_START_ADDRESS&&x<=RAM_END_ADDRESS)
 #define  CHECK_FLASH_ADDR(x)              (x>=FLASH_START_ADDRESS&&x<=FLASH_END_ADDRESS)
@@ -84,6 +94,14 @@ typedef enum RET_CODE
 #define   ISP_ERASE_WAIT_TIMEOUT_US       (120000)           
 #define   ISP_UART_RECV_TIMEOUT_US        (500)
 #define   ISP_RECV_BUF_SIZE               (1024)
+
+#define   ISP_DEFAULT_CFG_FLASH_START_ADDR      (0)
+#define   ISP_DEFAULT_CFG_SECTOR_SIZE           (0x1000)
+#define   ISP_DEFAULT_CFG_SECTOR_NUM            (0x10)
+#define   ISP_DEFAULT_CFG_RAM_START_ADDR        (0x10000000)
+#define   ISP_DEFAULT_CFG_RAM_SIZE              (0x2000)
+#define   ISP_DEFAULT_CFG_TARGET_IC             "LPC1125"
+#define   ISP_DEFAULT_CFG_BAUDRATE              "115200"
 
 int ISP_syncBaudRate(void);
 int ISP_getPartID(char partId[]);
