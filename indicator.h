@@ -10,5 +10,5 @@ void Indicator_connected(void);
 void Indicator_programing(void);
 void Indicator_programDone(void);
 void Indicator_programFail(void);
-
+void Indicator_offline(void);
 #endif

@@ -1,5 +1,6 @@
 #include "network.h"
 #include "cJSON.h"
+#include "OnlineProgram.h"
 
 /* global variable */
 EthernetInterface eth;
@@ -9,12 +10,13 @@ NETWORK_EVENT_T networkEvent;
 MSG_HANDLE_T msgHandle = {MSG_ID_INVALID,MSG_ID_INVALID,RESP_CODE_DEFAULT,RESP_CODE_DEFAULT};
 char DevMAC[16];
 extern Serial pc;
-extern char customerCode[32];
+extern char customerCode[];
 extern char uid[36];
-static uint32_t systemTimer = 0;
 static uint32_t sendMsgTime = 0;
+extern uint32_t systemTimer;
+extern volatile EVENT_FLAGS_T eventFlags;
 
-void initEth(void)
+void initNetwork(void)
 {
 	uint8_t macAddr[6];
 	#if SERVER_LOCAL
@@ -33,6 +35,7 @@ void initEth(void)
 		&macAddr[0],&macAddr[1],&macAddr[2],&macAddr[3],&macAddr[4],&macAddr[5]);
 	sprintf(DevMAC,"%02x%02x%02x%02x%02x%02x",macAddr[0],macAddr[1],macAddr[2],macAddr[3],macAddr[4],macAddr[5]);
 	pc.printf("ip:%s,mac:%s\r\n",eth.getIPAddress(),DevMAC);
+	tcpSock.set_blocking(false,40);
 }
 
 void initNetworkEvent(void)
@@ -43,7 +46,6 @@ void initNetworkEvent(void)
 	networkEvent.offlineFlag = true;
 	networkEvent.uidReqFlag = false;
 	networkEvent.firstConnectFlag = true;
-	networkEvent.uidProgramSuccessFlag = false;
 	networkEvent.authorizePassFlag = false;
 }
 
@@ -64,6 +66,7 @@ void checkNetwork(void)
 		}
 	}else{
 		if(networkEvent.heartbeatFlag == true){
+			networkEvent.heartbeatFlag = false;
 			sprintf(heartbeat,REQ_HEARTBEAT,API_ID_HEARTBEAT);
 			if(tcpSock.send(heartbeat,strlen(heartbeat))<0){
 				pc.printf("send heartbeat failed!\r\n");
@@ -76,7 +79,7 @@ void checkNetwork(void)
 	}
 }
 
-void sendMsgHandle(MSG_ID_T msgId)
+static void sendMsgHandle(MSG_ID_T msgId)
 {
 	int len;
 	switch((int)msgId){
@@ -87,7 +90,7 @@ void sendMsgHandle(MSG_ID_T msgId)
 			sprintf(socketInfo.outBuffer,REQ_GET_UID,API_ID_GET_UID,customerCode);
 			break;
 		case MSG_ID_NOTIFY:
-			sprintf(socketInfo.outBuffer,REQ_NOTIFY_RESULT,API_ID_NOTIFY_PROGRAM_UID_RESULT,uid,networkEvent.uidProgramSuccessFlag);
+			sprintf(socketInfo.outBuffer,REQ_NOTIFY_RESULT,API_ID_NOTIFY_PROGRAM_UID_RESULT,uid,eventFlags.UIDProgramSuccessFlag);
 			break;
 		default:
 			pc.printf("msgid illegal\r\n");
@@ -101,7 +104,7 @@ void sendMsgHandle(MSG_ID_T msgId)
 	}
 }
 
-void parseRecvMsgInfo(char *text)
+static void parseRecvMsgInfo(char *text)
 {
 	cJSON *json;
 	json = cJSON_Parse(text);
@@ -126,6 +129,7 @@ void parseRecvMsgInfo(char *text)
 					msgHandle.msgRecvId = MSG_ID_GET_UID;
 					if(msgHandle.recvRespCode == RESP_CODE_SUCCESS && cJSON_GetObjectItem(json,"UID") != NULL){
 						sprintf(uid,"%s",cJSON_GetObjectItem(json,"UID")->valuestring);
+						eventFlags.UIDavailableFlag = true;//start to program uid to target board
 						pc.printf("get uid successfully!UID:%s\r\n",uid);
 					}else{
 						pc.printf("get uid fail!\r\n");
@@ -134,6 +138,7 @@ void parseRecvMsgInfo(char *text)
 				case API_ID_NOTIFY_PROGRAM_UID_RESULT:
 					msgHandle.msgRecvId = MSG_ID_NOTIFY;
 					if(msgHandle.recvRespCode == RESP_CODE_SUCCESS){
+						eventFlags.notifyDoneFlag = true;
 						pc.printf("notify result successfully\r\n");
 					}else{
 						pc.printf("notify result failed\r\n");
@@ -141,16 +146,17 @@ void parseRecvMsgInfo(char *text)
 					break;
 				default:;
 			}
-			if(msgHandle.msgSendId == msgHandle.msgSendId && msgHandle.recvRespCode == RESP_CODE_SUCCESS){
+			if(msgHandle.msgSendId == msgHandle.msgRecvId && msgHandle.recvRespCode == RESP_CODE_SUCCESS){
 				msgHandle.msgSendId = msgHandle.msgRecvId = MSG_ID_INVALID;
 				msgHandle.recvRespCode = RESP_CODE_DEFAULT;
-				pc.printf("send msg %d successfully\r\n");
+				pc.printf("send msg %d successfully\r\n",apiId);
 			}
 		}
 	}
 }
 
-void msgRecvHandle(void){
+static void msgRecvHandle(void)
+{
 	int len;
 	len = sizeof(socketInfo.inBuffer);
 	memset(socketInfo.inBuffer,0x0,len);
@@ -165,8 +171,9 @@ void msgRecvHandle(void){
 void msgTransceiverHandle(void)
 {
 	if(networkEvent.offlineFlag == false){
-		if(msgHandle.msgSendId != MSG_ID_INVALID && (systemTimer - sendMsgTime >= MSG_RESEND_PERIOD_S)){
-			sendMsgHandle(msgHandle.msgSendId);
+		if(msgHandle.msgSendId != MSG_ID_INVALID){
+			if(systemTimer - sendMsgTime >= MSG_RESEND_PERIOD_S)
+				sendMsgHandle(msgHandle.msgSendId);
 		}else{
 			if(networkEvent.authorizeReqFlag == true){
 				msgHandle.msgSendId = MSG_ID_AUTH;

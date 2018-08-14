@@ -63,3 +63,10 @@ void Indicator_programFail(void)
 	GREEN_LED_OFF;
 	RED_LED_ON;
 }
+
+void Indicator_offline(void)
+{
+	RED_LED_ON;
+	GREEN_LED_ON;
+	BLUE_LED_OFF;
+}

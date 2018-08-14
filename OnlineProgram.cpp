@@ -10,6 +10,7 @@
 	#include "C12832.h"
 #endif
 #include "mbed.h"
+#include "OnlineProgram.h"
 
 /* Macro Definition */
 #define  FW_DESCRIPTION           "Online Program\r\nVersion:%s\r\nTarget platform:%s\r\n"
@@ -18,31 +19,9 @@
 #define  SPLIT_LINE               "--------------------------------------------------------------"
 #define  SD_DISK_NAME             "/sd"
 
-#define  DEBUG_UART_BAUD_RATE     (115200)
-#define  ISP_UART_BAUD_RATE       (115200)
-#define  CFG_FILE_SIZE_LIMIT      (1024)
-
-typedef enum MODE{
-	MODE_PROGRAM_CODE =0,
-	MODE_PROGRAM_UID,
-}MODE_T;
-
-typedef enum DEV_STATUS{
-	DEV_STATUS_BIN_NOT_FOUND=0,
-	DEV_STATUS_DISCONNECTED,
-	DEV_STATUS_CONNECTED,
-	DEV_STATUS_PROGRAMING,
-	DEV_STATUS_PROGRAM_SUCCESS,
-	DEV_STATUS_PROGRAM_FAIL,
-}DEV_STATUS_T;
-
-typedef struct EVENT_FLAGS{
-	bool devStatusChangeFlag;
-	bool binFileExsitFlag;
-	bool boardConnectedFlag;
-	bool startProgramFlag;
-	bool resetDevStatusFlag;
-}EVENT_FLAGS_T;
+#define  DEFAULT_DEBUG_UART_BAUDRATE     (115200)
+#define  DEFAULT_ISP_UART_BAUDRATE       (115200)
+#define  CFG_FILE_SIZE_LIMIT             (1024)
 
 /* Variable Definition */
 Serial pc(USBTX,USBRX);               //Debug UART
@@ -51,38 +30,80 @@ DigitalOut blue(LED_BLUE);
 DigitalOut green(LED_GREEN);
 DigitalOut red(LED_RED);
 InterruptIn sw2(SW2);
+InterruptIn sw3(SW3);
 SDFileSystem sd(PTE3, PTE1, PTE2, PTE4, "sd"); // MOSI, MISO, SCK, CS
 #if ENABLE_LCD12832
 	C12832 lcd(D11,D13,D12,D7,D10);
 #endif
 FILE *fp;
-volatile int devStatus = DEV_STATUS_BIN_NOT_FOUND;
-volatile EVENT_FLAGS_T eventFlags = {false,false,false,false};
+volatile int devStatus;
+volatile EVENT_FLAGS_T eventFlags;
 ISP_CONFIG_T ISPcfg;
-MODE_T mode;
+
 extern TCPSocketConnection tcpSock;
+extern NETWORK_EVENT_T networkEvent;
 char buffer[512];
 char binFilePath[36];
 char cfgFilePath[36];
-const char customerCode[32] = "orange20180810";
+char customerCode[] = "0000000100000002abcdefgh";
 char uid[36];
+uint32_t systemTimer = 0;
+volatile int deviceMode;
 
-/*sw2 irq handler */
+void oneSecondThread(const void *agurement)
+{
+	while(1){
+		Thread::wait(1000);
+		pc.printf("--------------------systemTimer=%d----------------------\r\n",systemTimer++);
+		if(deviceMode == MODE_PROGRAM_UID && systemTimer%HEARTBEAT_PERIOD_S == 0 && networkEvent.offlineFlag == false)
+			networkEvent.heartbeatFlag = true;
+	}
+}
+
+/* start to program */
 void sw2_release()
 {
-	if(devStatus == DEV_STATUS_CONNECTED){
-		eventFlags.startProgramFlag = true;
-	}else if(devStatus == DEV_STATUS_PROGRAM_FAIL || devStatus == DEV_STATUS_PROGRAM_SUCCESS){
-		eventFlags.resetDevStatusFlag = true;
+	if(deviceMode == MODE_PROGRAM_CODE){
+		if(devStatus == DEV_STATUS_CONNECTED){
+			eventFlags.startProgramFlag = true;
+		}
 	}else{
+		if(devStatus == DEV_STATUS_CONNECTED){
+			networkEvent.uidReqFlag = true;  //request UID
+		}
+	}
+	if(devStatus == DEV_STATUS_PROGRAM_FAIL || devStatus == DEV_STATUS_PROGRAM_SUCCESS)
+			eventFlags.resetDevStatusFlag = true;
+}
+
+/* switch deviceMode */
+void sw3_release()
+{
+	eventFlags.modeSwitchFlag = true;
+	if(deviceMode == MODE_PROGRAM_CODE){
+		deviceMode = MODE_PROGRAM_UID;
+	}else{
+		deviceMode = MODE_PROGRAM_CODE;
 	}
 }
 
 void ledInit(void)
 {
-	red =1;
+	red = 1;
 	green = 1;
 	blue = 1;
+}
+
+void resetEventFlags(void)
+{
+	eventFlags.binFileExsitFlag = false;
+	eventFlags.boardConnectedFlag = false;
+	eventFlags.resetDevStatusFlag = false;
+	eventFlags.startProgramFlag = false;
+	eventFlags.modeSwitchFlag = false;
+	eventFlags.UIDavailableFlag = false;
+	eventFlags.UIDProgramSuccessFlag = false;
+	eventFlags.notifyDoneFlag = false;
 }
 
 int detectFile(const char *dir,const char* file_type,char *path)
@@ -396,9 +417,13 @@ void test(void)
 int main()
 {
 	ledInit();
-	pc.baud(DEBUG_UART_BAUD_RATE);
-	isp.baud(ISP_UART_BAUD_RATE);
+	resetEventFlags();
 	sw2.rise(&sw2_release);
+	sw3.rise(&sw3_release);
+	/* set baudrate */
+	pc.baud(DEFAULT_DEBUG_UART_BAUDRATE);
+	isp.baud(DEFAULT_ISP_UART_BAUDRATE);
+	/* print setup imformation */
 	pc.printf("%s\r\n",SPLIT_LINE);
 	pc.printf(FW_DESCRIPTION,FW_VERSION,TARGET_PLATFORM);
 	pc.printf("%s\r\n",SPLIT_LINE);
@@ -413,36 +438,39 @@ int main()
 	wait(2);
 	pc.printf("Start to work!\r\n");
 	
-	/*
-	if(!detectBinFile(SD_DISK_NAME,binFilePath)){
-		pc.printf("Dectect bin file in sd card\r\nbin file:%s\r\n",binFilePath);
-		if(ISP_syncBaudRate() == RET_CODE_SUCCESS){
-			int ret = programBinFile(binFilePath);
-			if(!ret){
-				pc.printf("program  successfully!\r\n");
+	initNetworkEvent();
+	initNetwork();
+	Thread th1(oneSecondThread,NULL,osPriorityNormal,512);
+	
+  deviceMode = MODE_PROGRAM_UID; //select mode
+	pc.printf("Initial device mode:%d\r\n",deviceMode);
+	/* device status initialization */
+	if(deviceMode == MODE_PROGRAM_UID){
+		devStatus = DEV_STATUS_DISCONNECTED;
+	}else{
+		devStatus = DEV_STATUS_BIN_NOT_FOUND;
+	}
+
+	while(1){
+		/* Switch Stauts when deviceMode switched */
+		if(eventFlags.modeSwitchFlag == true){
+			pc.printf("mode change to %d\r\n",deviceMode);
+			eventFlags.modeSwitchFlag = false;
+			eventFlags.startProgramFlag = false;
+			if(deviceMode == MODE_PROGRAM_UID){
+				devStatus = DEV_STATUS_DISCONNECTED;
 			}else{
-				pc.printf("program failed!ret=%d\r\n",ret);
-			}
-			char uid[] = "abcdefghijklmnopqrstyvw";
-			ret = programUID(0xE160,uid,strlen(uid));
-			if(!ret){
-				pc.printf("program uid successfully!\r\n");
-			}else{
-				pc.printf("program uid failed!ret=%d\r\n",ret);
+				devStatus = DEV_STATUS_BIN_NOT_FOUND;
 			}
 		}
-	}else{
-		pc.printf("cannot detect bin file in sd card!please check!\r\n");
-	}
-	*/
-//	test();
-//	while(1){}
-	while(1){
+		
 		/* detect if bin file exsit */
-		if(!detectFile(SD_DISK_NAME,".bin",binFilePath)){
-			eventFlags.binFileExsitFlag = true;
-		}else{
-			eventFlags.binFileExsitFlag = false;
+		if(deviceMode == MODE_PROGRAM_CODE){ //Detect bin file when in program code deviceMode
+			if(!detectFile(SD_DISK_NAME,".bin",binFilePath)){
+				eventFlags.binFileExsitFlag = true;
+			}else{
+				eventFlags.binFileExsitFlag = false;
+			}
 		}
 		/* detect if connected to target board */
 		if(!detectConnectStatus()){
@@ -450,65 +478,109 @@ int main()
 		}else{
 			eventFlags.boardConnectedFlag = false;
 		}
-		/* status machine handle */
-		switch(devStatus){
-			case DEV_STATUS_BIN_NOT_FOUND:
-				Indicator_noBin();
-				if(eventFlags.binFileExsitFlag == true){
-					devStatus = DEV_STATUS_DISCONNECTED;
-				}
-				break;
-			case DEV_STATUS_CONNECTED:
-				Indicator_connected();
-				if(eventFlags.boardConnectedFlag == false){
-					devStatus = DEV_STATUS_DISCONNECTED;
-					eventFlags.startProgramFlag = false;
-				}
-				if(eventFlags.startProgramFlag == true){
-					devStatus = DEV_STATUS_PROGRAMING;
-					eventFlags.startProgramFlag = false;
-				}
-				if(eventFlags.binFileExsitFlag == false){
-					devStatus = DEV_STATUS_BIN_NOT_FOUND;
-					eventFlags.startProgramFlag = false;
-				}
-				break;
-			case DEV_STATUS_DISCONNECTED:
-				Indicator_disconnected();
-				if(eventFlags.boardConnectedFlag == true){
-					devStatus = DEV_STATUS_CONNECTED;
-				}
-				if(eventFlags.binFileExsitFlag == false){
-					devStatus = DEV_STATUS_BIN_NOT_FOUND;
-				}
-				break;
-			case DEV_STATUS_PROGRAMING:
-				pc.printf("bin:%s\r\n",binFilePath);
-				if(!programBinFile(binFilePath)){
-					pc.printf("program successfully!\r\n");
-					devStatus = DEV_STATUS_PROGRAM_SUCCESS;
-				}else{
-					pc.printf("program failed!\r\n");
-					devStatus = DEV_STATUS_PROGRAM_FAIL;
-				}
-				break;
-			case DEV_STATUS_PROGRAM_SUCCESS:
-				Indicator_programDone();
-				if(eventFlags.resetDevStatusFlag == true){
-					devStatus = DEV_STATUS_CONNECTED;
-					eventFlags.resetDevStatusFlag = false;
-				}
-				break;
-			case DEV_STATUS_PROGRAM_FAIL:
-				Indicator_programFail();
-				if(eventFlags.resetDevStatusFlag == true){
-					devStatus = DEV_STATUS_CONNECTED;
-					eventFlags.resetDevStatusFlag = false;
-				}
-				break;
-			default:
-				break;
+		if(deviceMode == MODE_PROGRAM_UID){//network enable when in program UID deviceMode
+//			checkNetwork();
+//			msgTransceiverHandle();
 		}
-		wait_ms(500);
+		if((deviceMode == MODE_PROGRAM_UID && networkEvent.authorizePassFlag == true) || deviceMode == MODE_PROGRAM_CODE){
+			/* status machine handle */
+			switch(devStatus){
+				case DEV_STATUS_BIN_NOT_FOUND:
+					Indicator_noBin();
+					if(eventFlags.binFileExsitFlag == true){
+						devStatus = DEV_STATUS_DISCONNECTED;
+					}
+					break;
+				case DEV_STATUS_CONNECTED:
+					Indicator_connected();
+					if(eventFlags.boardConnectedFlag == false){
+						devStatus = DEV_STATUS_DISCONNECTED;
+						eventFlags.startProgramFlag = false;
+					}
+					if(eventFlags.startProgramFlag == true){
+						devStatus = DEV_STATUS_PROGRAMING;
+						eventFlags.startProgramFlag = false;
+					}
+					if(deviceMode == MODE_PROGRAM_CODE){
+						if(eventFlags.binFileExsitFlag == false){
+							devStatus = DEV_STATUS_BIN_NOT_FOUND;
+							eventFlags.startProgramFlag = false;
+						}
+					}else{
+						if(eventFlags.UIDavailableFlag == true){
+							devStatus = DEV_STATUS_PROGRAMING;
+							eventFlags.UIDavailableFlag = false;
+						}
+					}
+					break;
+				case DEV_STATUS_DISCONNECTED:
+					Indicator_disconnected();
+					if(eventFlags.boardConnectedFlag == true){
+						devStatus = DEV_STATUS_CONNECTED;
+					}
+					if(eventFlags.binFileExsitFlag == false && deviceMode == MODE_PROGRAM_CODE){
+							devStatus = DEV_STATUS_BIN_NOT_FOUND;
+					}
+					break;
+				case DEV_STATUS_PROGRAMING:
+					if(deviceMode == MODE_PROGRAM_CODE){
+						if(!programBinFile(binFilePath)){ //start to program code
+							pc.printf("program code successfully!\r\n");
+							devStatus = DEV_STATUS_PROGRAM_SUCCESS;
+						}else{
+							pc.printf("program code failed!\r\n");
+							devStatus = DEV_STATUS_PROGRAM_FAIL;
+						}
+					}else{//start to program uid
+						if(!programUID(UID_PROGRAM_ADDRESS,uid,strlen(uid))){
+							devStatus = DEV_STATUS_PROGRAM_SUCCESS;
+							eventFlags.UIDProgramSuccessFlag = true;
+							pc.printf("Program UID successfully\r\n");
+						}else{
+							devStatus = DEV_STATUS_PROGRAM_FAIL;
+							eventFlags.UIDProgramSuccessFlag = false;
+							pc.printf("Program UID failed\r\n");
+						}
+						networkEvent.notifyResultFlag = true; //notify the result to server!
+					}
+					break;
+				case DEV_STATUS_PROGRAM_SUCCESS:
+					Indicator_programDone();
+					if(eventFlags.resetDevStatusFlag == true){
+						if(deviceMode == MODE_PROGRAM_CODE){
+							devStatus = DEV_STATUS_CONNECTED;
+							eventFlags.resetDevStatusFlag = false;
+						}else{
+							if(eventFlags.notifyDoneFlag == true){
+								devStatus = DEV_STATUS_CONNECTED;
+								eventFlags.resetDevStatusFlag = false;
+								eventFlags.notifyDoneFlag = false;
+							}
+						}
+					}
+					break;
+				case DEV_STATUS_PROGRAM_FAIL:
+					Indicator_programFail();
+					if(eventFlags.resetDevStatusFlag == true){
+						if(deviceMode == MODE_PROGRAM_CODE){
+							devStatus = DEV_STATUS_CONNECTED;
+							eventFlags.resetDevStatusFlag = false;
+						}else{
+							if(eventFlags.notifyDoneFlag == true){
+								devStatus = DEV_STATUS_CONNECTED;
+								eventFlags.resetDevStatusFlag = false;
+								eventFlags.notifyDoneFlag = false;
+							}
+						}
+					}
+					break;
+				default:
+					break;
+			}
+			wait_ms(200);
+		}else{
+			Indicator_offline();
+		}
+//    pc.printf("devStatus=%d\r\nmode=%d\r\n",devStatus,deviceMode);
 	}
 }

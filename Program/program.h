@@ -77,8 +77,8 @@ typedef struct ISP_CONFIG{
 }ISP_CONFIG_T;
 
 /* check if address of flash or ram is illegal */
-#define  CHECK_RAM_ADDR(x)        				(x>=RAM_START_ADDRESS&&x<=RAM_END_ADDRESS)
-#define  CHECK_FLASH_ADDR(x)              (x>=FLASH_START_ADDRESS&&x<=FLASH_END_ADDRESS)
+#define   CHECK_RAM_ADDR(x)        			  (x>=RAM_START_ADDRESS&&x<=RAM_END_ADDRESS)
+#define   CHECK_FLASH_ADDR(x)             (x>=FLASH_START_ADDRESS&&x<=FLASH_END_ADDRESS)
 
 #define   BAUDRATE_SYNC_SEND_STR          "?"
 #define   BAUDRATE_SYNC_RECV_STR          "Synchronized"

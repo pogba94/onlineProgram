@@ -5,21 +5,24 @@
 #include "EthernetInterface.h"
 #include "UserConfig.h"
 
+/* network configure */
 #if SERVER_LOCAL
 #define  DEFAULT_IP_ADDR          "192.168.1.100"
 #define  DEFAULT_NETMASK          "255.255.255.0"
 #define  DEFAULT_GATEWAY          "192.168.1.1"
 
-#define  DEFAULT_SERVER_IP        "192.168.1.100"
+#define  DEFAULT_SERVER_IP        "192.168.1.101"
 #define  DEFAULT_SERVER_PORT      11111
 #else
 #define  DEFAULT_SERVER_IP        "119.23.18.135"
 #define  DEFAULT_SERVER_PORT      11111
 #endif
 
+/* size of socket buffer */
 #define  SOCKET_IN_BUFFER_SIZE    (512)
 #define  SOCKET_OUT_BUFFER_SIZE   (512)
 
+/* msg interface definition */
 #define  REQ_AUTH                "{\"apiId\":%d,\"mac\":\"%s\",\"reconnect\":%d}"
 #define  REQ_GET_UID             "{\"apiId\":%d,\"customerCode\":\"%s\"}"
 #define  REQ_NOTIFY_RESULT       "{\"apiId\":%d,\"UID\":\"%s\",\"result\":%d}"
@@ -35,10 +38,10 @@ typedef enum MSG_ID{
 }MSG_ID_T;
 
 typedef enum API_ID{
-	API_ID_AUTH = 0,
-	API_ID_HEARTBEAT,
-	API_ID_GET_UID,
-	API_ID_NOTIFY_PROGRAM_UID_RESULT,
+	API_ID_AUTH = 1,
+	API_ID_HEARTBEAT = 2,
+	API_ID_GET_UID = 10,
+	API_ID_NOTIFY_PROGRAM_UID_RESULT = 20,
 }API_ID_T;
 
 typedef enum RESP_CODE{
@@ -54,7 +57,6 @@ typedef struct NETWORT_EVENT{
 	bool notifyResultFlag;
 	bool offlineFlag;
 	bool firstConnectFlag;
-	bool uidProgramSuccessFlag;
 	bool authorizePassFlag;
 }NETWORK_EVENT_T;
 
@@ -69,5 +71,10 @@ typedef struct MSG_HANDLE{
 	RESP_CODE_T sendRespCode;
 	RESP_CODE_T recvRespCode;
 }MSG_HANDLE_T;
+
+void initNetwork(void);
+void initNetworkEvent(void);
+void checkNetwork(void);
+void msgTransceiverHandle(void);
 
 #endif

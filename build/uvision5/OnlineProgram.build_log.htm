@@ -22,36 +22,39 @@ Dialog DLL:      TCM.DLL V1.27.0.0
  
 <h2>Project:</h2>
 D:\WPI\Project\SW-Online-program\V2.0\OnlineProgram\OnlineProgram.uvprojx
-Project File Date:  08/07/2018
+Project File Date:  08/14/2018
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 4 (build 422)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'OnlineProgram'
-compiling main.cpp...
+compiling OnlineProgram.cpp...
 indicator.h(14): warning:  #1-D: last line of file ends without a newline
   #endif
-main.cpp(249): warning:  #186-D: pointless comparison of unsigned integer with zero
+OnlineProgram.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+OnlineProgram.cpp(276): warning:  #186-D: pointless comparison of unsigned integer with zero
   	if(!
 HECK_FLASH_ADDR(addr) || addr%16!=0 || id == NULL || size <= 0)
-main.cpp(258): warning:  #177-D: variable "ret"  was declared but never referenced
+OnlineProgram.cpp(285): warning:  #177-D: variable "ret"  was declared but never referenced
   	int ret;
-main.cpp(352): warning:  #546-D: transfer of control bypasses initialization of:
-            variable "ISP_seting"  (declared at line 367)
-            variable "memory_map"  (declared at line 368)
+OnlineProgram.cpp(379): warning:  #546-D: transfer of control bypasses initialization of:
+            variable "ISP_seting"  (declared at line 394)
+            variable "memory_map"  (declared at line 395)
   		goto Exit;
   		^
-main.cpp(363): warning:  #546-D: transfer of control bypasses initialization of:
-            variable "ISP_seting"  (declared at line 367)
-            variable "memory_map"  (declared at line 368)
+OnlineProgram.cpp(390): warning:  #546-D: transfer of control bypasses initialization of:
+            variable "ISP_seting"  (declared at line 394)
+            variable "memory_map"  (declared at line 395)
   		goto Exit;
   		^
-main.cpp(435): warning:  #128-D: loop is not reachable
-  	while(1){
-main.cpp: 6 warnings, 0 errors
+OnlineProgram.cpp(444): warning:  #2570-D: function "rtos::Thread::Thread(void (*)(const void *), void *, osPriority, std::uint32_t, unsigned char *)"  (declared at line 138 of "mbed-rtos/rtos/Thread.h") was declared deprecated ("Thread-spawning constructors hide errors and may lead to complex program state when a thread is declared")
+  	Thread th1(oneSecondThread,
+ULL,osPriorityNormal,512);
+OnlineProgram.cpp: 7 warnings, 0 errors
 linking...
-Program Size: Code=56270 RO-data=7566 RW-data=256 ZI-data=8612  
+Program Size: Code=87752 RO-data=7960 RW-data=476 ZI-data=61944  
 After Build - User command #1: fromelf --bin -o .\build\uvision5\bin\OnlineProgram.bin .\build\uvision5\OnlineProgram.axf
-".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 6 Warning(s).
+".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\_OnlineProgram

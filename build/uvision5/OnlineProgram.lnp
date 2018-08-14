@@ -1,6 +1,7 @@
 --cpu=Cortex-M4.fp
-".\build\uvision5\main.o"
 ".\build\uvision5\indicator.o"
+".\build\uvision5\network.o"
+".\build\uvision5\onlineprogram.o"
 ".\build\uvision5\program.o"
 ".\build\uvision5\lib_crc16.o"
 ".\build\uvision5\uuencode.o"
