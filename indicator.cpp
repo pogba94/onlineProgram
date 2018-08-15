@@ -68,5 +68,26 @@ void Indicator_offline(void)
 {
 	RED_LED_ON;
 	GREEN_LED_ON;
+	BLUE_LED_ON;
+}
+
+void Indicator_noAuth(void)
+{
+	RED_LED_ON;
+	GREEN_LED_ON;
 	BLUE_LED_OFF;
+}
+
+void Indicator_modeSwitch(void)
+{
+	int i = 10;
+	RED_LED_OFF;
+	while(i--){
+		GREEN_LED_ON;
+		BLUE_LED_OFF;
+		wait_ms(100);
+		BLUE_LED_ON;
+		GREEN_LED_OFF;
+		wait_ms(100);
+	}
 }

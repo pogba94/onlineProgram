@@ -40,7 +40,7 @@ void initNetwork(void)
 
 void initNetworkEvent(void)
 {
-	networkEvent.authorizeReqFlag = true;
+	networkEvent.authorizeReqFlag = false;
 	networkEvent.heartbeatFlag = false;
 	networkEvent.notifyResultFlag = false;
 	networkEvent.offlineFlag = true;

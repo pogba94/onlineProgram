@@ -28,33 +28,36 @@ Project File Date:  08/14/2018
 *** Using Compiler 'V5.06 update 4 (build 422)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'OnlineProgram'
 compiling OnlineProgram.cpp...
-indicator.h(14): warning:  #1-D: last line of file ends without a newline
+indicator.h(16): warning:  #1-D: last line of file ends without a newline
   #endif
 OnlineProgram.h(29): warning:  #1-D: last line of file ends without a newline
   #endif
-OnlineProgram.cpp(276): warning:  #186-D: pointless comparison of unsigned integer with zero
+OnlineProgram.cpp(284): warning:  #186-D: pointless comparison of unsigned integer with zero
   	if(!
 HECK_FLASH_ADDR(addr) || addr%16!=0 || id == NULL || size <= 0)
-OnlineProgram.cpp(285): warning:  #177-D: variable "ret"  was declared but never referenced
+OnlineProgram.cpp(293): warning:  #177-D: variable "ret"  was declared but never referenced
   	int ret;
-OnlineProgram.cpp(379): warning:  #546-D: transfer of control bypasses initialization of:
-            variable "ISP_seting"  (declared at line 394)
-            variable "memory_map"  (declared at line 395)
+OnlineProgram.cpp(387): warning:  #546-D: transfer of control bypasses initialization of:
+            variable "ISP_seting"  (declared at line 402)
+            variable "memory_map"  (declared at line 403)
   		goto Exit;
   		^
-OnlineProgram.cpp(390): warning:  #546-D: transfer of control bypasses initialization of:
-            variable "ISP_seting"  (declared at line 394)
-            variable "memory_map"  (declared at line 395)
+OnlineProgram.cpp(398): warning:  #546-D: transfer of control bypasses initialization of:
+            variable "ISP_seting"  (declared at line 402)
+            variable "memory_map"  (declared at line 403)
   		goto Exit;
   		^
-OnlineProgram.cpp(444): warning:  #2570-D: function "rtos::Thread::Thread(void (*)(const void *), void *, osPriority, std::uint32_t, unsigned char *)"  (declared at line 138 of "mbed-rtos/rtos/Thread.h") was declared deprecated ("Thread-spawning constructors hide errors and may lead to complex program state when a thread is declared")
-  	Thread th1(oneSecondThread,
+OnlineProgram.cpp(631): warning:  #2570-D: function "rtos::Thread::Thread(void (*)(const void *), void *, osPriority, std::uint32_t, unsigned char *)"  (declared at line 138 of "mbed-rtos/rtos/Thread.h") was declared deprecated ("Thread-spawning constructors hide errors and may lead to complex program state when a thread is declared")
+  	Thread th1(sysTickTask,
 ULL,osPriorityNormal,512);
-OnlineProgram.cpp: 7 warnings, 0 errors
+OnlineProgram.cpp(632): warning:  #2570-D: function "rtos::Thread::Thread(void (*)(const void *), void *, osPriority, std::uint32_t, unsigned char *)"  (declared at line 138 of "mbed-rtos/rtos/Thread.h") was declared deprecated ("Thread-spawning constructors hide errors and may lead to complex program state when a thread is declared")
+  	Thread th2(mainTask,
+ULL,osPriorityAboveNormal,2048);
+OnlineProgram.cpp: 8 warnings, 0 errors
 linking...
-Program Size: Code=87752 RO-data=7960 RW-data=476 ZI-data=61944  
+Program Size: Code=106126 RO-data=8114 RW-data=548 ZI-data=62092  
 After Build - User command #1: fromelf --bin -o .\build\uvision5\bin\OnlineProgram.bin .\build\uvision5\OnlineProgram.axf
-".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 7 Warning(s).
+".\build\uvision5\OnlineProgram.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\_OnlineProgram
