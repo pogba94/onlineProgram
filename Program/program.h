@@ -66,34 +66,40 @@ typedef enum RET_CODE
 	RET_CODE_WRITE_FAIL = -5
 }RET_CODE_T;
 
+typedef enum ISP_ENCODE{
+	ISP_ENCODE_NONE = 0,
+	ISP_ENCODE_UU
+}ISP_ENCODE_T;
+
 typedef struct ISP_CONFIG{
-	char baudrate[8];
 	char tragetIC[32];
-	int flashStartAddress;
-	int sectorSize;
-	int sectorNum;
-	int RAMStartAddress;
-	int RAMSize;
+	char encode[16];
+	uint32_t baudrate;	
+	uint32_t flashStartAddress;
+	uint32_t sectorSize;
+	uint32_t sectorNum;
+	uint32_t RAMStartAddress;
+	uint32_t RAMSize;
 }ISP_CONFIG_T;
 
 /* check if address of flash or ram is illegal */
-#define   CHECK_RAM_ADDR(x)        			  (x>=RAM_START_ADDRESS&&x<=RAM_END_ADDRESS)
-#define   CHECK_FLASH_ADDR(x)             (x>=FLASH_START_ADDRESS&&x<=FLASH_END_ADDRESS)
+#define   CHECK_RAM_ADDR(x)        			       (x>=RAM_START_ADDRESS&&x<=RAM_END_ADDRESS)
+#define   CHECK_FLASH_ADDR(x)                  (x>=FLASH_START_ADDRESS&&x<=FLASH_END_ADDRESS)
 
-#define   BAUDRATE_SYNC_SEND_STR          "?"
-#define   BAUDRATE_SYNC_RECV_STR          "Synchronized"
-#define   OK_STR                          "OK"
-#define   ENDCODE_STR                     "\r\n"
-#define   UNLOCK_CMD_STR                  "U 23130"
-#define   DISABLE_ECHO_CMD_STR            "A 0\r\n"
-#define   CMD_SUCCESS_RESP_STR            "0\r\n"
+#define   BAUDRATE_SYNC_SEND_STR                "?"
+#define   BAUDRATE_SYNC_RECV_STR                "Synchronized"
+#define   OK_STR                                "OK"
+#define   ENDCODE_STR                           "\r\n"
+#define   UNLOCK_CMD_STR                        "U 23130"
+#define   DISABLE_ECHO_CMD_STR                  "A 0\r\n"
+#define   CMD_SUCCESS_RESP_STR                  "0\r\n"
 
-#define   ISP_MAX_SIZE_WRITE              (512)
-#define   ISP_MAX_SIZE_COPY               (1024)
-#define   ISP_WRITE_RAM_ADDR              (RAM_START_ADDRESS+0x300)
-#define   ISP_ERASE_WAIT_TIMEOUT_US       (120000)           
-#define   ISP_UART_RECV_TIMEOUT_US        (500)
-#define   ISP_RECV_BUF_SIZE               (1024)
+#define   ISP_MAX_SIZE_WRITE                    (512)
+#define   ISP_MAX_SIZE_COPY                     (1024)
+#define   ISP_WRITE_RAM_ADDR                    (RAM_START_ADDRESS+0x300)
+#define   ISP_ERASE_WAIT_TIMEOUT_US             (120000)           
+#define   ISP_UART_RECV_TIMEOUT_US              (500)
+#define   ISP_RECV_BUF_SIZE                     (1024)
 
 #define   ISP_DEFAULT_CFG_FLASH_START_ADDR      (0)
 #define   ISP_DEFAULT_CFG_SECTOR_SIZE           (0x1000)

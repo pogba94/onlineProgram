@@ -15,7 +15,8 @@ extern char uid[36];
 static uint32_t sendMsgTime = 0;
 extern uint32_t systemTimer;
 extern volatile EVENT_FLAGS_T eventFlags;
-
+extern char logStr[];
+	
 void initNetwork(void)
 {
 	uint8_t macAddr[6];
@@ -35,7 +36,7 @@ void initNetwork(void)
 		&macAddr[0],&macAddr[1],&macAddr[2],&macAddr[3],&macAddr[4],&macAddr[5]);
 	sprintf(DevMAC,"%02x%02x%02x%02x%02x%02x",macAddr[0],macAddr[1],macAddr[2],macAddr[3],macAddr[4],macAddr[5]);
 	pc.printf("ip:%s,mac:%s\r\n",eth.getIPAddress(),DevMAC);
-	tcpSock.set_blocking(false,40);
+	tcpSock.set_blocking(false,40); //non-blocking mode
 }
 
 void initNetworkEvent(void)
@@ -165,7 +166,7 @@ static void msgRecvHandle(void)
 		socketInfo.inBuffer[n] = '\0';
 		pc.printf("recieve %d bytes,%s\r\n",n,socketInfo.inBuffer);
 		parseRecvMsgInfo(socketInfo.inBuffer);
-	}	
+	}
 }
 
 void msgTransceiverHandle(void)

@@ -17,7 +17,8 @@
 #define  FW_VERSION               "V1.0.0"
 #define  TARGET_PLATFORM          "LPC1125"
 #define  SPLIT_LINE               "--------------------------------------------------------------"
-#define  SD_DISK_NAME             "/sd"
+#define  SD_ROOT_DERECTORY        "/sd"
+#define  SD_DISK_NAME             "sd"
 #define  LOG_FILE_PATH            "/sd/log.txt"
 
 #define  DEFAULT_DEBUG_UART_BAUDRATE     (115200)
@@ -25,23 +26,23 @@
 #define  CFG_FILE_SIZE_LIMIT             (1024)
 
 /* Variable Definition */
-Serial pc(USBTX,USBRX);               //Debug UART
-Serial isp(PTE24,PTE25);              // ISP UART 
+Serial pc(USBTX,USBRX); //Debug UART
+Serial isp(PTE24,PTE25); // ISP UART 
 DigitalOut blue(LED_BLUE);
 DigitalOut green(LED_GREEN);
 DigitalOut red(LED_RED);
 InterruptIn sw2(SW2);
 InterruptIn sw3(SW3);
-SDFileSystem sd(PTE3, PTE1, PTE2, PTE4, "sd"); // MOSI, MISO, SCK, CS
+SDFileSystem sd(PTE3,PTE1,PTE2,PTE4,SD_DISK_NAME); // MOSI, MISO, SCK, CS
 #if ENABLE_LCD12832
 	C12832 lcd(D11,D13,D12,D7,D10);
 #endif
 FILE *fp;
 FILE *logFile;
-volatile int devStatus;
-volatile int deviceMode;
-volatile EVENT_FLAGS_T eventFlags;
 ISP_CONFIG_T ISPcfg;
+int devStatus;
+int deviceMode = MODE_PROGRAM_UID;  
+volatile EVENT_FLAGS_T eventFlags;
 char buffer[512];
 char binFilePath[36];
 char cfgFilePath[36];
@@ -49,10 +50,12 @@ char customerCode[] = "0000000100000002abcdefgh";
 char uid[36];
 char logStr[128];
 uint32_t systemTimer = 0;
+
+/* extern variable */
 extern TCPSocketConnection tcpSock;
 extern NETWORK_EVENT_T networkEvent;
 
-void sysTickTask(const void *agurement)
+void sysTickThread(const void *agurement)
 {
 	while(1){
 		Thread::wait(1000);
@@ -129,7 +132,7 @@ int detectFile(const char *dir,const char* file_type,char *path)
 		if(p != NULL){
 			if(strcmp(path,fp->d_name)){
 				path[0] = '\0';
-				strcat(path,SD_DISK_NAME);
+				strcat(path,SD_ROOT_DERECTORY);
 				strcat(path,"/");
 				strcat(path,fp->d_name);
 				closedir(d);
@@ -141,12 +144,13 @@ int detectFile(const char *dir,const char* file_type,char *path)
 	return -3;
 }
 
-int detectConnectStatus(void)
+inline int detectConnectStatus(void)
 {
 	return ISP_syncBaudRate();
 }
 
-int programBinFile(const char *path)
+
+int programBinFileV1(const char *path)
 {
 	if(path == NULL)
 		return -1;
@@ -173,8 +177,7 @@ int programBinFile(const char *path)
 		pc.printf("Erase sectors failed!ret=%d\r\n",ret);
 		return -4;
 	}
-	pc.printf("Erase sectors successfully!\r\n");
-	pc.printf("Programing...\r\n");
+	pc.printf("Erase sectors successfully!\r\nPrograming...\r\n");
 	
 	/* malloc memory */
 	char *buffer = (char*)malloc(512);
@@ -278,6 +281,137 @@ int programBinFile(const char *path)
 	}
 }
 
+int programBinFileV2(const char *path,uint8_t encode_type)
+{
+	if(path == NULL)
+		return -1;
+	/* open file */
+	fp = fopen(path,"rb");
+	if(fp == NULL){
+		pc.printf("failed to open bin file,please check if bin file exsit!\r\n");
+		return -2;
+	}
+	/* check size of bin file */
+	int size;
+	fseek(fp,0,SEEK_END);
+	size = ftell(fp);
+	pc.printf("size of bin file:%d bytes\r\n",size);
+	if(size < MIN_BIN_SIZE || size > FLASH_SIZE){
+		pc.printf("size is out of range allowed\r\n");
+		return -3;
+	}
+	/* erase sectors */
+	int ret;
+	ISP_unlock();
+	ret = ISP_erase(0,SECTOR_NUM-1);
+	if(ret != RET_CODE_SUCCESS){
+		pc.printf("Erase sectors failed!ret=%d\r\n",ret);
+		return -4;
+	}
+	pc.printf("Erase sectors successfully!\r\nPrograming...\r\n");
+	
+	/* malloc memory */
+	char *buffer = (char*)malloc(512);
+	if(buffer == NULL){
+		return -5;
+	}
+	/* program */
+	int num = size/512 +(size%512!=0);
+	int lastPackSize = (size%512==0)?512:(size%512);
+	int *checksumW = (int*)malloc(sizeof(int)*num);
+	if(checksumW == NULL){
+	  free(buffer);
+		return -5;
+	}
+	int *checksumR = (int*)malloc(sizeof(int)*num);
+	if(checksumR == NULL){
+	  free(buffer);
+		free(checksumW);
+		return -5;
+	}
+	#if SHOW_PROGRAM_SCHEDULE
+	int n = 60;
+	for(int i=0;i<n;i++)
+		pc.putc('=');
+	pc.puts("\r\n");
+	#endif
+	ISP_unlock();
+	for(int i=0;i<num;i++){
+		Indicator_programing();
+		/* load data */
+		fseek(fp,i*512,SEEK_SET);
+		if(i==num-1){
+			if(fread(buffer,sizeof(char),lastPackSize,fp)!=lastPackSize){
+				ret = -6;
+				goto Exit;
+			}
+			for(int j=lastPackSize;j<512;j++)//filled with 0xff
+				buffer[j] = 0xff;
+		}else{
+			if(fread(buffer,sizeof(char),512,fp) != 512){
+				ret = -6;
+				goto Exit;
+			}
+		}
+		if(i==0){//modify vector at 0x1c
+			uint32_t tmp = 0;
+			for(int j=0;j<28;j++){
+				tmp += (uint32_t)buffer[j]<<((j%4)*8);
+			}
+			tmp = ~tmp + 1;
+			for(int j=0;j<4;j++){
+				buffer[28+j] = tmp>>(j*8);
+			}
+		}
+		if(ISP_WriteToRAM(ISP_WRITE_RAM_ADDR,512,buffer)!= RET_CODE_SUCCESS){
+			ret = -7;
+			goto Exit;
+		}
+		if(ISP_copyToFlash(i*512,ISP_WRITE_RAM_ADDR,512) != RET_CODE_SUCCESS){
+			ret = -8;
+			goto Exit;
+		}
+		/* calculate checksum */
+		checksumW[i] = 0;
+		for(int j=0;j<512;j++){
+			checksumW[i] += buffer[j];
+		}
+		#if SHOW_PROGRAM_SCHEDULE
+		n = (i==num-1)?(60-(60/num)*(num-1)):(60/num);
+		for(int k=0;k<n;k++)
+			pc.putc('*');
+		#endif
+	}
+	pc.printf("\r\nprogram finished\r\nverifying...\r\n");
+	/* Verify */
+	for(int i=0;i<num;i++){
+		checksumR[i] = 0;
+		if(ISP_readMemory(i*512,512,buffer) != RET_CODE_SUCCESS){
+			ret = -9;
+			goto Exit;
+		}
+		for(int j=0;j<512;j++){
+			checksumR[i] += buffer[j];
+		}
+		if(checksumR[i] != checksumW[i]){
+			ret = -10;
+			goto Exit;
+		}
+	}
+	pc.printf("verify OK!\r\n");
+	fclose(fp);
+	return 0;
+	/* free memory here */
+	Exit:
+	{
+		free(buffer);
+		free(checksumR);
+		free(checksumW);
+		fclose(fp);
+		return ret;
+	}	
+}
+
 int programUID(uint32_t addr,const char id[],uint8_t size)
 {
 	int i;
@@ -345,8 +479,7 @@ int strFlit(const char* in,char *out)
 	return 0;
 }
 
-
-int getConfig(const char* path,ISP_CONFIG_T* config)
+int getISPCfg(const char* path,ISP_CONFIG_T* config)
 {
 	if(path == NULL || config == NULL)
 		return -1;
@@ -378,32 +511,38 @@ int getConfig(const char* path,ISP_CONFIG_T* config)
 	fread(txt,sizeof(char),size,fp);
 	txt[size] = '\0';
 	pc.printf("txt:%s\r\n",txt);
-	strFlit(txt,txtFlit);
-	pc.printf("txt filter:%s\r\n",txtFlit);
+//	strFlit(txt,txtFlit);
+//	pc.printf("txt filter:%s\r\n",txtFlit);
 	cJSON *json = cJSON_Parse(txt);
 	if(!json){
 		pc.printf("no json string!\r\n");
 		ret = -5;
 		goto Exit;
 	}
-	if(cJSON_GetObjectItem(json,"platform") == NULL ||
-			cJSON_GetObjectItem(json,"map") == NULL ||
+	if(cJSON_GetObjectItem(json,"platform") == NULL || cJSON_GetObjectItem(json,"map") == NULL ||
 			cJSON_GetObjectItem(json,"ISP_setting") == NULL){
-				pc.printf("lack of item\r\nplatform:%d,map:%d,isp_setting:%d\r\n",
-				cJSON_GetObjectItem(json,"platform"),
-				cJSON_GetObjectItem(json,"map"),
-				cJSON_GetObjectItem(json,"ISP_setting")
-				);
+		pc.printf("lack of item\r\n");
 		ret = -6;
 		goto Exit;
 	}
-	sprintf(config->tragetIC,"%s",cJSON_GetObjectItem(json,"platfrom")->valuestring);
-	pc.printf("platform:%s\r\n",config->tragetIC);
-  cJSON *ISP_seting = cJSON_GetObjectItem(json,"ISP_setting");
-  cJSON *memory_map = cJSON_GetObjectItem(json,"map");
-  sprintf(config->baudrate,"%s",cJSON_GetObjectItem(ISP_seting,"baudrate")->valuestring);
-	pc.printf("baudrate:%d\r\n",config->baudrate);
-  pc.printf("check item pass\r\n");	
+	cJSON *ISP_seting = cJSON_GetObjectItem(json,"ISP_setting");
+  cJSON *memory_map = cJSON_GetObjectItem(json,"map");		
+	if(cJSON_GetObjectItem(ISP_seting,"baudrate") == NULL || cJSON_GetObjectItem(ISP_seting,"encode") == NULL ||
+		 cJSON_GetObjectItem(memory_map,"flash_start_address") == NULL || cJSON_GetObjectItem(memory_map,"flash_sector_size") == NULL ||
+	   cJSON_GetObjectItem(memory_map,"flash_sector_num") == NULL || cJSON_GetObjectItem(memory_map,"ram_start_address") == NULL ||
+	   cJSON_GetObjectItem(memory_map,"ram_size") == NULL){
+		pc.printf("lack of item\r\n");
+		ret = -6;
+		goto Exit;	 
+	}
+	sprintf(config->tragetIC,"%s",cJSON_GetObjectItem(json,"platform")->valuestring);
+	sprintf(config->encode,"%s",cJSON_GetObjectItem(ISP_seting,"encode")->valuestring);
+  config->baudrate = cJSON_GetObjectItem(ISP_seting,"baudrate")->valueint;
+	config->flashStartAddress = cJSON_GetObjectItem(memory_map,"flash_start_address")->valueint;
+	config->sectorSize = cJSON_GetObjectItem(memory_map,"flash_sector_size")->valueint;
+	config->sectorNum = cJSON_GetObjectItem(memory_map,"flash_sector_num")->valueint;
+	config->RAMStartAddress = cJSON_GetObjectItem(memory_map,"ram_start_address")->valueint;
+	config->RAMSize = cJSON_GetObjectItem(memory_map,"ram_size")->valueint;
 	return 0;
 	Exit:
 	{
@@ -415,9 +554,14 @@ int getConfig(const char* path,ISP_CONFIG_T* config)
 
 void test(void)
 {
-	if(!detectFile(SD_DISK_NAME,".json",cfgFilePath)){
+	if(!detectFile(SD_ROOT_DERECTORY,".json",cfgFilePath)){
 		pc.printf("found configure file:%s\r\n",cfgFilePath);
-		getConfig(cfgFilePath,&ISPcfg);
+		if(!getISPCfg(cfgFilePath,&ISPcfg)){
+			pc.printf("target IC:%s\r\nbaudrate:%d\r\nencode:%s\r\nflash start address:%d\r\nsector size:%d\r\nsecotr num:%d\r\nram start address:%d\r\nram size:%d\r\n"
+			,ISPcfg.tragetIC,ISPcfg.baudrate,ISPcfg.encode,ISPcfg.flashStartAddress,ISPcfg.sectorSize,ISPcfg.sectorNum,ISPcfg.RAMStartAddress,ISPcfg.RAMSize);
+		}else{
+			pc.printf("get config error\r\n");
+		}
 	}else{
 		pc.printf("cannot found configure file\r\n");
 	}
@@ -438,7 +582,6 @@ int printLog(const char* path,const char* txt)
 	fclose(logFile);
 	return 0;
 }
-
 
 void updateDeviceStatus(void)
 {
@@ -482,11 +625,19 @@ void updateDeviceStatus(void)
 			break;
 		case DEV_STATUS_PROGRAMING:
 			if(deviceMode == MODE_PROGRAM_CODE){
-				if(!programBinFile(binFilePath)){ //start to program code
+				if(!programBinFileV1(binFilePath)){ //start to program code
 					pc.printf("program code successfully!\r\n");
+					#if PRINT_LOG
+					sprintf(logStr,"Program code %s successfully",binFilePath);
+					printLog(LOG_FILE_PATH,logStr);
+					#endif
 					devStatus = DEV_STATUS_PROGRAM_SUCCESS;
 				}else{
 					pc.printf("program code failed!\r\n");
+					#if PRINT_LOG
+					sprintf(logStr,"Program code %s failed",binFilePath);
+					printLog(LOG_FILE_PATH,logStr);
+					#endif
 					devStatus = DEV_STATUS_PROGRAM_FAIL;
 				}
 			}else{//start to program uid
@@ -494,18 +645,18 @@ void updateDeviceStatus(void)
 					devStatus = DEV_STATUS_PROGRAM_SUCCESS;
 					eventFlags.UIDProgramSuccessFlag = true;
 					pc.printf("Program UID successfully\r\n");
+					#if PRINT_LOG
 					sprintf(logStr,"program uid:%s at %x successfully",uid,UID_PROGRAM_ADDRESS);
-					if(!printLog(LOG_FILE_PATH,logStr)){
-						pc.printf("log print ok!\r\n");
-					}
+					printLog(LOG_FILE_PATH,logStr);
+					#endif
 				}else{
 					devStatus = DEV_STATUS_PROGRAM_FAIL;
 					eventFlags.UIDProgramSuccessFlag = false;
 					pc.printf("Program UID failed\r\n");
+					#if PRINT_LOG
 					sprintf(logStr,"program uid:%s at %x failed",uid,UID_PROGRAM_ADDRESS);
-					if(!printLog(LOG_FILE_PATH,logStr)){
-						pc.printf("log print ok!\r\n");
-					}
+					printLog(LOG_FILE_PATH,logStr);
+					#endif
 				}
 				networkEvent.notifyResultFlag = true; //notify the result to server!
 			}
@@ -545,12 +696,16 @@ void updateDeviceStatus(void)
 	}
 }
 
-void mainTask(void const * argue)
+void mainThread(void const * argue)
 {
 	while(1){
-			/* Switch Stauts when deviceMode switched */
+			/* reset Stauts when deviceMode switched */
 		if(eventFlags.modeSwitchFlag == true){
 			pc.printf("mode change to %d\r\n",deviceMode);
+			#if PRINT_LOG
+			sprintf(logStr,"switch to mode %d",deviceMode);
+			printLog(LOG_FILE_PATH,logStr);
+			#endif
 			Indicator_modeSwitch();
 			resetEventFlags();
 			if(deviceMode == MODE_PROGRAM_UID){
@@ -562,9 +717,9 @@ void mainTask(void const * argue)
 			}
 		}
 		
-		/* detect if bin file exsit */
-		if(deviceMode == MODE_PROGRAM_CODE){ //Detect bin file when in program code deviceMode
-			if(!detectFile(SD_DISK_NAME,".bin",binFilePath)){
+		/* detect if bin file exsit when in program code mode */
+		if(deviceMode == MODE_PROGRAM_CODE){ 
+			if(!detectFile(SD_ROOT_DERECTORY,".bin",binFilePath)){
 				eventFlags.binFileExsitFlag = true;
 			}else{
 				eventFlags.binFileExsitFlag = false;
@@ -576,7 +731,8 @@ void mainTask(void const * argue)
 		}else{
 			eventFlags.boardConnectedFlag = false;
 		}
-		if(deviceMode == MODE_PROGRAM_UID){//network enable when in program UID deviceMode
+		/* network handle when in program UID deviceMode */
+		if(deviceMode == MODE_PROGRAM_UID){
 			checkNetwork();
 			msgTransceiverHandle();
 		}
@@ -589,7 +745,7 @@ void mainTask(void const * argue)
 				Indicator_noAuth();
 		}
 		Thread::wait(200);
-	}//end of while(1)
+	}
 }
 
 int main()
@@ -611,25 +767,26 @@ int main()
 		lcd.locate(0,0);
 		lcd.printf("Online Program for LPC1125");
 	#endif
-	
+	sd.disk_initialize();
 	pc.printf("SD card Initializing,wait for a moment please!\r\n");
-	wait(2);
-	pc.printf("Start to work!\r\n");
+	wait(1);
+	pc.printf("Start to work in mode:%d\r\n",deviceMode);
+  #if PRINT_LOG
+	sprintf(logStr,"system setup");
+	printLog(LOG_FILE_PATH,logStr);
+	#endif
 	
+	test();
+	while(1){}
+	/* config network */
 	initNetworkEvent();
 	initNetwork();
-	
-  deviceMode = MODE_PROGRAM_UID; //select mode
-	pc.printf("Initial device mode:%d\r\n",deviceMode);
 	/* device status initialization */
-	if(deviceMode == MODE_PROGRAM_UID){
-		devStatus = DEV_STATUS_DISCONNECTED;
-	}else{
-		devStatus = DEV_STATUS_BIN_NOT_FOUND;
-	}
+	devStatus = (deviceMode==MODE_PROGRAM_UID)?DEV_STATUS_DISCONNECTED:DEV_STATUS_BIN_NOT_FOUND;
+	
 	/* Setup Task */
-	Thread th1(sysTickTask,NULL,osPriorityNormal,512);
-	Thread th2(mainTask,NULL,osPriorityAboveNormal,2048);
+	Thread th1(sysTickThread,NULL,osPriorityNormal,512);
+	Thread th2(mainThread,NULL,osPriorityAboveNormal,2048);
 	while(1){
 	}
 }

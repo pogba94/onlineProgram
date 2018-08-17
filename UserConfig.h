@@ -10,5 +10,6 @@
 #define  SHOW_PROGRAM_SCHEDULE     (1)
 #define  ENABLE_LCD12832           (0)
 #define  SERVER_LOCAL              (1)
+#define  PRINT_LOG                 (1)
 
 #endif
